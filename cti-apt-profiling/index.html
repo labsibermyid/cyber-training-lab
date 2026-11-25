@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lab CTI · Profiling APT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap">
+<style>
+:root{
+ --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+ --f-head:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+ --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+ --bg:#f3f5f6;--paper:#fff;--soft:#e9eef1;--ink:#17232b;--muted:#5b6b75;--line:#d9e0e4;
+ --accent:#0d5d6e;--accent-soft:#dcecef;--side:#14232b;--side-ink:#c9d6dd;
+ --rel:#b03a2e;--rel-bg:#f8e1de;--par:#9a6400;--par-bg:#fbefd6;--unr:#4b6170;--unr-bg:#e3e9ed;
+}
+@media (prefers-color-scheme:dark){:root{
+ --bg:#0f161a;--paper:#162127;--soft:#1c2a31;--ink:#e3eaee;--muted:#93a4ae;--line:#2a3a43;
+ --accent:#5fb7c8;--accent-soft:#183840;--side:#0b1114;--side-ink:#b9c7cf;
+ --rel:#f08a7e;--rel-bg:#3b1d1a;--par:#e5b45a;--par-bg:#352a12;--unr:#a9bcc8;--unr-bg:#23313a;
+}}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth;scroll-padding-top:120px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--f-body)}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-head);line-height:1.15;margin:0}
+.mono{font-family:var(--f-mono)}
+[hidden]{display:none!important}
+
+.shell{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100vh}
+aside{background:var(--side);color:var(--side-ink);position:sticky;top:0;height:100vh;overflow:auto;padding:18px 0 24px}
+aside .brand{padding:0 18px 14px;border-bottom:1px solid #ffffff1a}
+aside .brand b{display:block;color:#fff;font:700 18px/1.2 var(--f-head)}
+aside .brand span{font-size:12.5px;opacity:.8}
+aside h4{margin:16px 18px 6px;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#8fa3ae;font-weight:600}
+aside a{display:flex;align-items:center;gap:10px;padding:7px 18px;color:inherit;text-decoration:none;font-size:14px}
+aside a:hover{background:#ffffff12;color:#fff}
+aside a .n{font:12px var(--f-mono);opacity:.6;width:20px}
+aside a .dot{margin-left:auto;width:10px;height:10px;border-radius:50%;border:1.5px solid #ffffff55;flex:none}
+aside a .dot.related{background:#f08a7e;border-color:#f08a7e}
+aside a .dot.partial{background:#e5b45a;border-color:#e5b45a}
+aside a .dot.unrelated{background:#a9bcc8;border-color:#a9bcc8}
+
+main{padding:0 28px 60px;max-width:1080px;width:100%}
+.top{position:sticky;top:0;z-index:20;background:var(--bg);padding:14px 0 12px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.top-row{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.prog{flex:1 1 220px}
+.prog small{color:var(--muted);font-size:13px}
+.bar{height:8px;background:var(--soft);border-radius:4px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:5px 12px;font-size:13.5px;display:inline-flex;gap:6px;align-items:center}
+.chip b{font:600 12px var(--f-mono);background:var(--soft);border-radius:9px;padding:0 6px;min-width:20px;text-align:center}
+.chip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip[aria-pressed=true] b{background:#ffffff33}
+
+.intro{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin-bottom:26px}
+.intro h1{font-size:30px;margin-bottom:6px}
+.intro p{margin:6px 0;color:var(--muted)}
+.intro .meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted);margin:10px 0 14px}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:12px}
+.legend div{border-radius:8px;padding:10px 12px;font-size:13.5px}
+.legend b{display:block;font-size:14px}
+.lg-r{background:var(--rel-bg);color:var(--rel)}.lg-p{background:var(--par-bg);color:var(--par)}.lg-u{background:var(--unr-bg);color:var(--unr)}
+.legend span{color:var(--ink);opacity:.85}
+.who{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.who label{font-weight:600;font-size:14px}
+.who input{flex:1 1 240px;max-width:360px;height:38px;border:1px solid var(--line);border-radius:6px;padding:0 10px;background:var(--bg)}
+
+.actor{background:var(--paper);border:1px solid var(--line);border-radius:10px;margin-bottom:26px;overflow:hidden;border-left:5px solid var(--line)}
+.actor.related{border-left-color:var(--rel)}.actor.partial{border-left-color:var(--par)}.actor.unrelated{border-left-color:var(--unr)}
+.a-head{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:flex-end;justify-content:space-between;padding:16px 20px 12px;background:#1e3a5c;color:#fff}
+.a-head h2{font-size:27px}
+.a-head .sub{font-size:13px;opacity:.85}
+.a-head .tag{font:600 12.5px var(--f-mono);text-align:right;opacity:.9}
+
+.decide{padding:14px 20px 16px;border-bottom:1px solid var(--line);background:var(--soft)}
+.decide .q{font-weight:600;font-size:14px;margin-bottom:8px}
+.dbtns{display:flex;flex-wrap:wrap;gap:8px}
+.dbtn{flex:1 1 150px;min-height:44px;border-radius:8px;border:2px solid var(--line);background:var(--paper);font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px}
+.dbtn .k{font:500 11px var(--f-mono);opacity:.6}
+.dbtn.r:hover{border-color:var(--rel)}.dbtn.p:hover{border-color:var(--par)}.dbtn.u:hover{border-color:var(--unr)}
+.dbtn.r[aria-pressed=true]{background:var(--rel);border-color:var(--rel);color:#fff}
+.dbtn.p[aria-pressed=true]{background:var(--par);border-color:var(--par);color:#fff}
+.dbtn.u[aria-pressed=true]{background:var(--unr);border-color:var(--unr);color:#fff}
+@media (prefers-color-scheme:dark){.dbtn[aria-pressed=true]{color:#111!important}}
+.checks{display:flex;flex-wrap:wrap;gap:6px 16px;margin:12px 0 8px;font-size:13.5px}
+.checks span{font-weight:600;width:100%;font-size:13px;color:var(--muted)}
+.checks label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.checks input{width:16px;height:16px;accent-color:var(--accent)}
+.decide textarea{width:100%;min-height:64px;border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--paper);resize:vertical;font-size:14px}
+.decide .row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px;font-size:12.5px;color:var(--muted)}
+.linkbtn{background:none;border:0;color:var(--accent);padding:2px 0;font-size:12.5px;text-decoration:underline}
+
+.profile{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);border-bottom:1px solid var(--line)}
+.profile section{padding:16px 20px}
+.profile section+section{border-left:1px solid var(--line)}
+.lbl{font:600 12px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+dl.id{display:grid;grid-template-columns:150px minmax(0,1fr);margin:0;font-size:14px}
+dl.id dt,dl.id dd{padding:6px 0;border-bottom:1px solid var(--line);margin:0}
+dl.id dt{color:var(--muted);font-weight:500}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:grid;grid-template-columns:112px minmax(0,1fr);gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.tl li:last-child{border-bottom:0}
+.tl b{font-size:13.5px;color:var(--accent)}
+.tl small{display:block;color:var(--muted);font-size:12.5px}
+.tools{padding:14px 20px;border-bottom:1px solid var(--line)}
+.tools ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.tools li{border:1px solid var(--line);background:var(--accent-soft);color:var(--accent);border-radius:6px;padding:3px 10px;font-size:13px;font-weight:600}
+.story{padding:16px 20px 18px}
+.story p{margin:0 0 10px;max-width:78ch}
+.story p:last-child{margin-bottom:0}
+
+.summary{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin-bottom:26px}
+.summary h2{font-size:24px;margin-bottom:4px}
+.summary p{margin:0 0 12px;color:var(--muted);font-size:14px}
+.tscroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:600;font-size:13px}
+td.why{white-space:pre-wrap;min-width:260px}
+td.empty{color:var(--muted);font-style:italic}
+.pill{display:inline-block;border-radius:999px;padding:1px 10px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.pill.related{background:var(--rel-bg);color:var(--rel)}.pill.partial{background:var(--par-bg);color:var(--par)}.pill.unrelated{background:var(--unr-bg);color:var(--unr)}.pill.none{background:var(--soft);color:var(--muted)}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+.btn{height:38px;padding:0 14px;border-radius:6px;border:1px solid var(--line);background:var(--paper);font-weight:500;font-size:14px}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.warn{color:var(--rel)}
+.confirm{display:inline-flex;gap:8px;align-items:center;font-size:13.5px;background:var(--rel-bg);color:var(--rel);padding:6px 10px;border-radius:6px}
+.refs{font-size:13.5px}
+.refs ol{padding-left:22px;margin:8px 0 0}
+.refs li{margin-bottom:4px}
+.refs a{color:var(--accent);word-break:break-word}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#17232b;color:#fff;padding:9px 16px;border-radius:6px;font-size:14px;z-index:50;box-shadow:0 8px 24px #0004}
+.noresult{padding:30px;text-align:center;color:var(--muted);background:var(--paper);border:1px dashed var(--line);border-radius:10px;margin-bottom:26px}
+
+@media (max-width:900px){
+ .shell{grid-template-columns:minmax(0,1fr)}
+ aside{position:static;height:auto;padding:10px 0}
+ aside .brand{border:0;padding-bottom:6px}
+ aside h4{display:none}
+ aside nav{display:flex;overflow-x:auto;padding:0 8px}
+ aside a{flex:none;padding:6px 10px}
+ aside a .dot{margin-left:4px}
+ main{padding:0 14px 40px}
+ .profile{grid-template-columns:minmax(0,1fr)}
+ .profile section+section{border-left:0;border-top:1px solid var(--line)}
+ dl.id{grid-template-columns:120px minmax(0,1fr)}
+ html{scroll-padding-top:16px}
+}
+@media (max-width:600px){.top{position:static}}
+@media print{
+ aside,.top,.intro .who input,.decide,.acts,.toast{display:none!important}
+ .shell{display:block}main{max-width:none;padding:0}
+ .actor{break-inside:avoid}
+ body{background:#fff;color:#000}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside>
+ <div class="brand"><b>Lab CTI · Profiling APT</b><span>Kejaksaan RI · Participant copy</span></div>
+ <h4>Aktor</h4>
+ <nav id="nav" aria-label="Daftar aktor"></nav>
+ <h4>Lainnya</h4>
+ <nav aria-label="Bagian lain"><a href="#summary"><span class="n">7</span>Ringkasan prioritas</a><a href="#refs"><span class="n">↗</span>Sumber laporan</a></nav>
+</aside>
+
+<main>
+ <div class="top">
+  <div class="top-row">
+   <div class="prog"><small id="progTxt">0 dari 10 aktor dinilai</small><div class="bar"><i id="progBar"></i></div></div>
+   <div class="filters" role="group" aria-label="Saring aktor">
+    <button class="chip" data-f="all" aria-pressed="true">Semua <b id="c-all">10</b></button>
+    <button class="chip" data-f="related" aria-pressed="false">Related <b id="c-related">0</b></button>
+    <button class="chip" data-f="partial" aria-pressed="false">Partial <b id="c-partial">0</b></button>
+    <button class="chip" data-f="unrelated" aria-pressed="false">Unrelated <b id="c-unrelated">0</b></button>
+    <button class="chip" data-f="none" aria-pressed="false">Belum dinilai <b id="c-none">10</b></button>
+   </div>
+  </div>
+ </div>
+
+ <div class="intro">
+  <h1>Profiling and Prioritizing APT Groups</h1>
+  <p>Relevant to the Attorney General's Office of the Republic of Indonesia (Kejaksaan RI).</p>
+  <div class="meta"><span>Version 1.0 · November 2026</span><span>Audience: analysts, IT administrators, and intelligence staff</span><span>Classification: internal training material, compiled from OSINT</span></div>
+  <p style="color:var(--ink)"><b>Tugas:</b> baca profil dan laporan setiap aktor, lalu tentukan apakah aktor itu relevan bagi Kejaksaan RI. Pilih salah satu tombol di atas setiap aktor dan tulis alasannya. Hasilnya terkumpul otomatis di <a href="#summary" style="color:var(--accent)">Ringkasan prioritas</a>.</p>
+  <div class="legend">
+   <div class="lg-r"><b>Related</b><span>Bukti kuat aktor ini relevan bagi Kejaksaan RI.</span></div>
+   <div class="lg-p"><b>Partial</b><span>Sebagian kriteria terpenuhi, tetapi tidak semuanya.</span></div>
+   <div class="lg-u"><b>Unrelated</b><span>Tidak ada bukti relevansi bagi Kejaksaan RI.</span></div>
+  </div>
+  <p style="margin-top:12px;font-size:13.5px">Contoh dari modul: <b>Mustang Panda — Yes</b> · “Highly relevant: Indonesia confirmed, ministries/intelligence, active 2025”.</p>
+  <div class="who"><label for="pname">Nama peserta</label><input id="pname" autocomplete="name" placeholder="Tulis nama Anda (muncul di ekspor dan cetak)"></div>
+ </div>
+
+ <div id="actors"></div>
+ <div id="noresult" class="noresult" hidden>Tidak ada aktor dengan status ini.</div>
+
+ <section class="summary" id="summary">
+  <h2>7. Priority Summary Sheet</h2>
+  <p>Terisi otomatis dari pilihan dan alasan Anda di atas. <span id="sumWho"></span></p>
+  <div class="tscroll"><table><thead><tr><th>No</th><th>Actor</th><th>Related</th><th>Reason</th></tr></thead><tbody id="sumBody"></tbody></table></div>
+  <div class="acts">
+   <button class="btn pri" id="exportCsv" type="button">Unduh CSV</button>
+   <button class="btn" id="copySum" type="button">Salin ringkasan</button>
+   <button class="btn" id="printBtn" type="button">Cetak / simpan PDF</button>
+   <button class="btn warn" id="resetBtn" type="button">Hapus semua jawaban</button>
+   <span id="confirmBox" class="confirm" hidden>Hapus semua pilihan dan alasan? <button class="btn warn" id="resetYes" type="button">Ya, hapus</button><button class="btn" id="resetNo" type="button">Batal</button></span>
+  </div>
+  <p style="margin-top:10px;font-size:12.5px">Jawaban tersimpan di browser ini saja. Gunakan Unduh CSV atau Cetak untuk menyerahkan hasil.</p>
+ </section>
+
+ <section class="summary refs" id="refs">
+  <h2>Sumber laporan</h2>
+  <ol id="refList"></ol>
+ </section>
+</main>
+</div>
+
+<script>
+const ACTORS=[
+{id:'01',name:'Earth Estries',nexus:'China-nexus',
+ idt:[['Primary name','Earth Estries'],['Aliases','Salt Typhoon · FamousSparrow · GhostEmperor · UNC2286'],['Suspected attribution','China-nexus APT group (state-sponsored)'],['Origin / nexus','China-nexus'],['Active since','c. 2020'],['Motivation','Espionage'],['Operating regions','US · Asia-Pacific · Middle East · South Africa'],['Related groups','FamousSparrow, GhostEmperor, CL-STA-1048, Crimson Palace']],
+ act:[['Nov 2024','New GHOSTSPIDER backdoor found while attacking telecom companies in Southeast Asia.','Trend Micro'],['2024','Linux MASOL RAT planted on Southeast Asian government networks; victims in 12+ countries including Indonesia.','Trend Micro'],['Mar – Sep 2025','Overlapping cluster CL-STA-1048 active inside a Southeast Asian government entity.','Unit 42']],
+ tools:['GHOSTSPIDER','SNAPPYBEE / Deed RAT','MASOL RAT','Demodex rootkit','Ivanti CVE-2023-46805'],
+ text:[`The name Salt Typhoon made headlines in 2024 when the networks of several major US telecom operators, including Verizon, AT&T, Lumen, and T-Mobile, were reported to have been infiltrated. Trend Micro tracks a group with overlapping patterns under the name Earth Estries and also maps it to FamousSparrow, GhostEmperor, and UNC2286. Trend Micro is careful, however: it only confirms overlapping TTPs and does not claim that every Salt Typhoon incident is the work of the same group.`,
+ `In its November 2024 report, Trend Micro described the group as one of the most aggressive Chinese APTs since 2023 and said it had been attacking governments and internet service providers since 2020. More than 20 organizations had been breached: telecommunications, technology, consulting, chemicals, transportation, government agencies, and NGOs. Victims are spread across more than a dozen countries, including Afghanistan, Brazil, Eswatini, India, Indonesia, Malaysia, Pakistan, the Philippines, South Africa, Taiwan, Thailand, the US, and Vietnam.`,
+ `The entry point is almost always an internet-facing server: Ivanti Connect Secure VPN flaws (CVE-2023-46805 and CVE-2024-21887), Fortinet FortiClient EMS, Sophos firewalls, and Microsoft Exchange. Once inside, they move using living-off-the-land binaries and install modular backdoors. While attacking telecom companies in Southeast Asia, researchers found a new backdoor called GHOSTSPIDER. There is also SNAPPYBEE (Deed RAT), shared with other Chinese groups, and MASOL RAT, a cross-platform backdoor first seen in Southeast Asian government incidents in 2020 and now deployed on Linux devices in government networks in the same region. Its C2 infrastructure is managed by several different teams.`,
+ `In March 2026, Unit 42 reported a cluster, CL-STA-1048, overlapping with Earth Estries and Crimson Palace, that was active from March to September 2025 inside a Southeast Asian government entity using MasolRAT and the RawCookie backdoor.`]},
+{id:'02',name:'Amaranth-Dragon',nexus:'China-nexus',
+ idt:[['Primary name','Amaranth-Dragon'],['Aliases','Part of the APT41 ecosystem'],['Suspected attribution','APT41 ecosystem (China-nexus)'],['Origin / nexus','China-nexus'],['Active since','Tracked since Mar 2025'],['Motivation','Espionage'],['Operating regions','Indonesia · Thailand · Cambodia · Laos · Singapore · Philippines'],['Related groups','APT41 (tool & code-style overlap)']],
+ act:[['18 Aug 2025','Archive posing as a civil-servant salary-increase decree exploited WinRAR CVE-2025-8088 (4 days after the public exploit).','Check Point / CYFIRMA'],['Sep 2025','Password-protected RAR hosted on Dropbox delivered the Telegram-controlled TGAmaranth RAT to Indonesian targets.','CYFIRMA'],['4 Feb 2026','Public report: main targets are government and law enforcement, especially police, across ASEAN.','Check Point Research']],
+ tools:['WinRAR CVE-2025-8088','Amaranth Loader','TGAmaranth RAT','Havoc C2','Cloudflare geofencing'],
+ text:[`On 18 August 2025, a number of government employees in Indonesia received an archive that looked like an official decree on a civil-servant salary increase. The timing was no coincidence: the real 8% pay rise had just taken effect on 1 August 2025. The RAR archive exploited CVE-2025-8088, a path-traversal flaw in WinRAR that was disclosed on 8 August, with a public exploit circulating on 14 August. Only four days after the exploit became available, it was already being used. When opened, the archive placed a script in the Windows Startup folder so the malware would run every time the computer started.`,
+ `Check Point Research, which published its findings on 4 February 2026, named the actor Amaranth-Dragon and assessed it to be linked to the APT41 ecosystem, based on similarities in malware arsenal, development style, use of DLL side-loading, and working hours in the UTC+8 time zone. The group has been tracked since March 2025, with campaigns in Cambodia, Thailand, Laos, Indonesia, Singapore, and the Philippines. Its targets are almost always government agencies and law enforcement, especially the police.`,
+ `Amaranth-Dragon's signature is campaigns built per country, not per volume. One or two countries are worked at a time, lures are tailored to local events or geopolitical issues, and the C2 servers sit behind Cloudflare with geofencing so that only victims in the target country are served. Its arsenal includes Amaranth Loader, the Havoc C2 framework executed in memory, and, in more recent campaigns, TGAmaranth RAT, controlled via Telegram. In early September 2025, a password-protected RAR hosted on Dropbox was used to deliver TGAmaranth RAT to targets in Indonesia.`]},
+{id:'03',name:'Sandworm',nexus:'Russia-nexus',
+ idt:[['Primary name','Sandworm'],['Aliases','APT44 · Seashell Blizzard · Voodoo Bear · Telebots · Iron Viking'],['Suspected attribution','GRU Unit 74455 (Russian military intelligence)'],['Origin / nexus','Russia-nexus'],['Active since','c. 2009'],['Motivation','Sabotage / destructive'],['Operating regions','Ukraine · Europe (Poland, etc.)'],['Related groups','UAC-0099, CARR, XAKNET, Solntsepek']],
+ act:[['Apr – Sep 2025','ZEROLOT and Sting wipers used against Ukrainian government, energy, logistics and even the grain sector.','ESET'],['Dec 2025',"Attempted wiper attack on Poland's power grid.",'ESET'],['Dec 2023',"Took down Kyivstar, Ukraine's largest mobile operator.",'Public reporting']],
+ tools:['ZEROLOT wiper','Sting wiper','ZOV wiper','DynoWiper','OT/ICS attacks'],
+ text:[`Few groups deliberately try to switch off a country's electricity. Sandworm, linked by multiple governments and vendors to Unit 74455 of Russia's military intelligence service (GRU), is one of them. The group goes by many names: APT44, Seashell Blizzard, Voodoo Bear, Telebots, Iron Viking. Mandiant also links it to several personas posing as “hacktivists”, such as the Cyber Army of Russia Reborn (CARR), XAKNET, and Solntsepek.`,
+ `Its track record is dominated by destructive operations in Ukraine. In December 2023, Ukraine's largest mobile operator, Kyivstar, was knocked offline. Throughout 2025, ESET investigated more than ten destructive malware incidents attributed to Sandworm, almost all in Ukraine. ESET's APT activity report for April–September 2025 recorded the ZEROLOT and Sting wipers being used against Ukrainian government bodies, energy companies, logistics, and even the grain sector. Sting was executed through a scheduled task named after the Hungarian dish “goulash”. In some incidents, initial access was gained by another group, UAC-0099, which then handed it over to Sandworm to deploy wipers. In late December 2025, the group was linked to an attempted wiper attack on Poland's power grid.`,
+ `Note that Sandworm also has an initial-access subgroup that Microsoft says operates across a dozen-plus countries, but public reporting shows no focus on Southeast Asia or on the law enforcement sector in this region.`]},
+{id:'04',name:'Lotus Blossom',nexus:'China-nexus',
+ idt:[['Primary name','Lotus Blossom'],['Aliases','Lotus Panda · Billbug · Spring Dragon · Thrip'],['Suspected attribution','State-sponsored China-nexus APT group'],['Origin / nexus','China-nexus'],['Active since','c. 2012'],['Motivation','Espionage'],['Operating regions','Philippines · Vietnam · Hong Kong · Taiwan · Indonesia (historical)'],['Related groups','Thrip, Billbug, Spring Dragon']],
+ act:[['Aug 2024 – Feb 2025','Breached a government ministry, an air traffic control organization, a telco and a construction firm in one Southeast Asian country.','Symantec'],['Feb 2025','New Sagerunex variants abuse Dropbox, Twitter and Zimbra webmail as C2 channels.','Cisco Talos'],['Since 2015','Indonesia listed among historical targets.','CYFIRMA']],
+ tools:['Sagerunex','ChromeKatz / CredentialKatz','C2 via Dropbox/Twitter/Zimbra','DLL side-loading'],
+ text:[`Between August 2024 and February 2025, a government ministry, an air traffic control organization, a telecom operator, and a construction company in one Southeast Asian country were infiltrated by the same actor. Symantec's Threat Hunter Team attributed the activity to Lotus Panda, a group also known as Lotus Blossom, Billbug, Spring Dragon, and Thrip. The attackers abused legitimate executables from Trend Micro and Bitdefender antivirus products to load malicious DLLs (side-loading), then deployed browser credential stealers such as ChromeKatz and CredentialKatz.`,
+ `A few weeks earlier, in late February 2025, Cisco Talos published an analysis of multiple variants of Sagerunex, a remote access trojan used exclusively by this group. Talos assessed that Lotus Blossom has been active since at least 2012 and is still operating, targeting government, manufacturing, telecommunications, and media in the Philippines, Vietnam, Hong Kong, and Taiwan. What stands out is how it hides its communications: some Sagerunex variants use Dropbox, Twitter, and even Zimbra webmail as C2 channels, so malicious traffic looks like ordinary service use. Stolen data is encrypted before it is sent out.`,
+ `A 2026 Indonesia threat-landscape review noted that Indonesia has been on this group's list of historical targets since 2015, although no new Indonesian victims were confirmed in the most recent reporting period.`]},
+{id:'05',name:'Lazarus Group',nexus:'DPRK-nexus',
+ idt:[['Primary name','Lazarus Group'],['Aliases','Hidden Cobra · TraderTraitor / APT38 (financial clusters)'],['Suspected attribution','Reconnaissance General Bureau (RGB), North Korea'],['Origin / nexus','DPRK-nexus'],['Active since','c. 2009'],['Motivation','Financial + espionage'],['Operating regions','Global · including Indonesia'],['Related groups','APT38, TraderTraitor, Andariel, Kimsuky']],
+ act:[['Sep 2024','Indonesian exchange Indodax lost ~US$20 million; transaction pattern resembles Lazarus.','Cyvers'],['Feb 2025','Bybit lost ~US$1.5 billion — the largest financial theft on record.','Public reporting'],['2025','DPRK-linked actors estimated to have stolen ~US$2 billion in crypto during the year.','Blockchain analysts']],
+ tools:['Crypto theft','Fake recruiters (DreamJob)','Trojanized trading apps','Laundering via mixers & bridges'],
+ text:[`In September 2024, Indodax, one of Indonesia's largest crypto exchanges, lost around US$20 million across more than 150 transactions. Blockchain security firm Cyvers assessed that the pattern, with very fast asset movement, access-control breaches, and layered swaps, was typical of the Lazarus Group, which is backed by North Korea. It was not the first time: in 2018, the group was suspected of breaching another Indonesian crypto exchange (believed to also be Indodax) with losses of nearly US$25 million. Attribution of the 2024 case remains a suspicion based on transaction patterns.`,
+ `Lazarus is known worldwide for the Sony Pictures hack (2014) and the WannaCry ransomware (2017), but in recent years its focus has shifted heavily to money, especially crypto. In February 2025, the Bybit exchange lost about US$1.5 billion, the largest financial theft on record, and multiple crypto research firms attributed it to Lazarus. Blockchain analysts estimate that North Korea-linked actors stole about US$2.02 billion in crypto during 2025. The group sits under the Reconnaissance General Bureau (RGB) and has sub-clusters such as APT38 and TraderTraitor.`,
+ `Its modus relies on social engineering: posing as job recruiters (the “Operation DreamJob” pattern), business partners, or trading-app developers; sending trojanized applications; and stealing the credentials of employees who hold wallet keys. Once funds are stolen, assets are laundered through mixers, cross-chain bridges, and many intermediary addresses.`]},
+{id:'06',name:'TGR-STA-1030',nexus:'Asia (state-aligned)',
+ idt:[['Primary name','TGR-STA-1030'],['Aliases',"UNC6619 · 'Shadow Campaigns'"],['Suspected attribution','State-aligned, assessed to operate out of Asia'],['Origin / nexus','Asia (state-aligned)'],['Active since','Infrastructure since Jan 2024'],['Motivation','Espionage'],['Operating regions','37 countries compromised (2025) · reconnaissance of 155 countries'],['Related groups','(no strong public links yet)']],
+ act:[['Mid-2025','An Indonesian law enforcement entity was compromised; also an airline operating at Soekarno-Hatta.','Unit 42 / CYFIRMA'],['Nov – Dec 2025','Reconnaissance of government infrastructure in 155 countries.','Unit 42'],['5 Feb 2026','Victims include a ministry of justice, finance ministries and five national law enforcement/border entities.','Unit 42']],
+ tools:['Diaoyu loader','Cobalt Strike → VShell','ShadowGuard (eBPF rootkit)','Behinder / Godzilla','N-day Exchange & SAP exploits'],
+ text:[`On 5 February 2026, Unit 42 disclosed a new espionage group it tracks as TGR-STA-1030, naming its activity “Shadow Campaigns”. Unit 42 assessed with high confidence that this is a state-aligned group operating out of Asia. Other sources track it as UNC6619. The scale of its operations is striking: during 2025, the group breached government or critical-infrastructure networks in 37 countries, and in November–December 2025 it conducted reconnaissance against government infrastructure in 155 countries. Its infrastructure has existed since January 2024.`,
+ `Indonesia is mentioned explicitly. In mid-2025, an Indonesian law enforcement entity was compromised. The report also mentions a suspected compromise of infrastructure belonging to an official linked to Papua province, as well as an airline operating at Soekarno-Hatta Airport. Globally, victims include five national-level law enforcement/border control entities, three finance ministries, a ministry of justice, and ministries of interior, foreign affairs, trade, immigration, mining, and energy, plus telecom operators and parliaments.`,
+ `Initial access took two routes. The first was phishing emails themed on ministry reorganization that directed victims to a mega.nz archive containing the Diaoyu loader; the loader checks for sandboxes and security products before downloading Cobalt Strike. The second was exploitation of publicly known (N-day) flaws in SAP, Microsoft Exchange, Apache Struts2, Commvault, and other enterprise products; they even attempted CVE-2019-11580 against e-passport/e-visa services. Unit 42 found no zero-days. Once inside, they moved from Cobalt Strike to VShell, used Havoc, SparkRat, and Sliver, planted the Behinder, Neo-reGeorg, and Godzilla web shells, tunneled with GOST, FRPS, and IOX, and installed ShadowGuard, an eBPF-based Linux rootkit that hides processes and files, which is assessed to be unique to this group.`]},
+{id:'07',name:'Earth Lamia',nexus:'China-nexus',
+ idt:[['Primary name','Earth Lamia'],['Aliases','REF0657 · STAC6451 · CL-STA-0048'],['Suspected attribution','China-nexus intrusion set'],['Origin / nexus','China-nexus'],['Active since','c. 2023'],['Motivation','Espionage / data theft'],['Operating regions','Brazil · India · Indonesia · Malaysia · Philippines · Thailand · Vietnam'],['Related groups','REF0657, STAC6451, CL-STA-0048']],
+ act:[['Until early 2024','Focused on financial services, especially securities and brokerage firms.','Trend Micro'],['H2 2024','Shifted to logistics and online retail.','Trend Micro'],['2025','Shifted again to IT companies, universities and government organizations; joined SAP NetWeaver exploitation.','Trend Micro']],
+ tools:['SQL injection','PULSEPACK','BypassBoss','Cobalt Strike & Supershell','SAP NetWeaver exploit'],
+ text:[`Earth Lamia is a group whose targets keep moving. Trend Micro, which has tracked it since 2023 and published its profile in May 2025, noted that until early 2024 the group targeted financial services, especially securities and brokerage firms. In the second half of 2024, its focus shifted to logistics and online retail. Later, its targets shifted again to IT companies, universities, and government agencies. In each period, it attacked many organizations but in only a handful of industries. Affected countries include Brazil, India, and Southeast Asia, with Indonesia, Malaysia, the Philippines, Thailand, and Vietnam named as prominent targets. The group overlaps with clusters REF0657 (Elastic), STAC6451 (Sophos), and CL-STA-0048 (Unit 42), and is assessed as a China-nexus intrusion set.`,
+ `Its favorite entry point is SQL injection against web applications to break into target SQL servers, probably with the help of sqlmap, along with exploitation of various public server flaws such as Apache Struts2, GitLab, JetBrains TeamCity, CyberPanel, WordPress plugins, and more recently SAP NetWeaver. Once inside, they use Cobalt Strike and Supershell, tunnel with Rakshasa and Stowaway, escalate privileges with GodPotato and JuicyPotato, scan the network with Fscan and Kscan, and clear Windows logs with wevtutil.exe. Although they rely on open-source tools, they modify them to evade detection (e.g., BypassBoss) and develop their own backdoor, PULSEPACK, a new version of which appeared in 2025 with a different communication protocol. In some attacks on Indian entities, they also tried to run Mimic ransomware, though often unsuccessfully.`]},
+{id:'08',name:'SideWinder',nexus:'India-nexus',
+ idt:[['Primary name','SideWinder'],['Aliases','RagaSerpent · Rattlesnake · Razor Tiger · T-APT-04'],['Suspected attribution','Assessed to serve Indian interests'],['Origin / nexus','India-nexus'],['Active since','c. 2012'],['Motivation','Espionage'],['Operating regions','South Asia · Southeast Asia · Middle East · Africa'],['Related groups','Patchwork (overlap debated), Bitter (overlap debated)']],
+ act:[['Early 2026','Indonesian-language tax and audit spearphishing; fake portals mimicking government/tax systems.','ITSEC Asia'],['Mar 2025','Expanded to Southeast Asian maritime & logistics and South Asian nuclear sectors; Indonesia among affected countries.','Kaspersky'],['Historical','Main targets: police, military, maritime and navy.','Kaspersky']],
+ tools:['StealerBot','Old document exploits (CVE-2017-11882)','Fake login portals','Windows Service persistence'],
+ text:[`In early 2026, a number of government agencies in Indonesia received emails that looked official: themed on taxes and audits, written in Indonesian, and referencing institutions such as the tax authority. ITSEC Asia's threat intelligence report linked this campaign to RagaSerpent, its name for the group better known as SideWinder, and described it as a continuation of campaigns seen earlier in India and Thailand in 2025. Some recipients were directed to fake login portals mimicking government or tax systems to steal credentials; those credentials were used to map accounts and identify high-value targets. Selected targets then received an installer disguised as an official document or compliance tool, which triggered a staged infection, persisted via a Windows Service, and communicated directly with C2 IP addresses (rather than domains). Besides government, telecommunications and other strategic sectors were also targeted.`,
+ `SideWinder, also known as Rattlesnake, Razor Tiger, and T-APT-04, has been active since at least 2012 and is generally associated with Indian interests. Historically, its targets have been police, military, maritime, and naval forces, as well as governments in Pakistan, Sri Lanka, China, and parts of Africa. In March 2025, Kaspersky reported that the group had broadened its targeting to maritime and logistics companies in Southeast Asia and to nuclear facilities in South Asia, with a reach that includes Indonesia, Cambodia, and other countries. Kaspersky described it as highly prolific and quick to change tools to evade detection; even so, the group still frequently relies on documents exploiting old vulnerabilities (such as CVE-2017-11882 in Microsoft Office) and uses the StealerBot data stealer.`]},
+{id:'09',name:'UNC3886',nexus:'China-nexus (per industry)',
+ idt:[['Primary name','UNC3886'],['Aliases','None widely used (Mandiant designation)'],['Suspected attribution','Espionage group linked to China by experts'],['Origin / nexus','China-nexus (per industry)'],['Active since','Publicly reported since 2022'],['Motivation','Espionage / pre-positioning'],['Operating regions','US · Asia · Singapore'],['Related groups','(no strong public links yet)']],
+ act:[['18 Jul 2025',"Singapore's Coordinating Minister for National Security: UNC3886 is attacking Singapore's critical infrastructure.",'CSA Singapore'],['9 Feb 2026','Operation CYBER GUARDIAN: all four major Singapore telcos affected; a zero-day used to bypass a firewall, rootkits for persistence.','CSA Singapore'],['2026','No evidence that customer data was stolen or services disrupted.','CSA Singapore']],
+ tools:['Network-device zero-days','Rootkits','VMware ESXi / vCenter','Fortinet & Juniper'],
+ text:[`On 18 July 2025, at the 10th anniversary event of Singapore's Cyber Security Agency (CSA), Coordinating Minister for National Security K. Shanmugam stated that UNC3886 was attacking Singapore's critical infrastructure “as we speak”. The minister did not name a sponsor, but experts link the group to China. Singapore's armed forces were even brought in to help respond. Mandiant, which coined the name UNC3886, knows the group as a specialist in rarely monitored infrastructure components: firewalls, routers, and virtualization platforms, with a track record of zero-days in Fortinet, VMware, and Juniper devices. Industry links it to attacks on the defense, telecommunications, and technology sectors in the US and Asia.`,
+ `On 9 February 2026, CSA announced the results of Operation CYBER GUARDIAN, Singapore's largest coordinated cyber incident response, which ran for more than eleven months and involved more than 100 personnel. All four major Singapore telcos, M1, SIMBA, Singtel, and StarHub, were affected. In one case, the actor used a previously unknown vulnerability (zero-day) to bypass a perimeter firewall and stole a small amount of technical network data; in another, it used rootkits to persist and cover its tracks. The actor reached critical systems in a limited way but did not get far enough to disrupt services, and there was no evidence that customer data was stolen.`]},
+{id:'10',name:'Earth Krahang',nexus:'China-nexus',
+ idt:[['Primary name','Earth Krahang'],['Aliases','None widely used (Trend Micro designation)'],['Suspected attribution','China-nexus; suspected ties to contractor I-Soon'],['Origin / nexus','China-nexus'],['Active since','Tracked since early 2022'],['Motivation','Espionage'],['Operating regions','Focus on Southeast Asia · Europe · Americas · Africa (45 countries)'],['Related groups','Earth Lusca, I-Soon (suspected)']],
+ act:[['2022 – 2023','One hacked government mailbox sent RAR archives with LNK files to 796 addresses at the same agency.','Trend Micro'],['2023','48+ government organizations compromised; 11 different ministries in a single country.','Trend Micro'],['Mar 2024','Public report: ~70 organizations in 23 countries confirmed compromised.','Trend Micro']],
+ tools:['XDealer / DinodasRAT','RESHELL','Cobalt Strike','OWA brute-force','Openfire CVE-2023-32315'],
+ text:[`Imagine an email arriving from your own agency's official address, containing a RAR archive about office matters. Trend Micro found exactly that scenario: a single compromised government mailbox was used to send an archive containing LNK files to 796 email addresses at the same agency. When opened, the file installed the XDealer backdoor (also known as DinodasRAT) while displaying a lure document related to that agency. The mailbox was likely compromised because of a weak password. This is Earth Krahang's defining trait: abusing trust between government agencies. Compromised government web servers are used to host backdoors, relay attack traffic, and send spearphishing to other agencies, so malicious links appear to come from legitimate government domains and slip past blocklists. Lures found include salary themes and a “Malaysian Ministry of Defense Circular”.`,
+ `Trend Micro published its findings on 18 March 2024 after tracking the campaign since early 2022. Operational mistakes by the actor allowed researchers to retrieve samples, configuration files, and logs from its servers. The result: about 70 organizations in 23 countries confirmed compromised, including at least 48 government organizations; in one country, the actor breached 11 different ministries. Its main focus is Southeast Asia, with additional activity in Europe, the Americas, and Africa, totaling 45 countries. Foreign ministries were among the top targets. Indonesia is not explicitly mentioned in the report. The campaign has many touchpoints with the China-nexus group Earth Lusca, but its infrastructure and backdoors differ; Trend Micro also discussed a possible link to the contractor I-Soon.`,
+ `Besides spearphishing, Earth Krahang scans public servers with sqlmap, nuclei, xray, vscan, pocsuite, and wordpressscan; looks for exposed .git or .idea folders; exploits flaws such as Oracle Web Applications Desktop Integrator (CVE-2022-21587) and Openfire (CVE-2023-32315); brute-forces Outlook Web Access; and then installs web shells, Cobalt Strike, RESHELL, XDealer, PlugX, or ShadowPad.`]}
+];
+const REFS=[
+['Trend Micro — Game of Emperor: Earth Estries (Nov 2024)','https://www.trendmicro.com/en_us/research/24/k/earth-estries.html'],
+['Check Point Research — Amaranth-Dragon weaponizes CVE-2025-8088 (Feb 2026)','https://research.checkpoint.com/2026/amaranth-dragon-weaponizes-cve-2025-8088-for-targeted-espionage/'],
+['CYFIRMA — Threat Landscape Indonesia (Jun 2026)','https://www.cyfirma.com/?p=59574'],
+['ESET/WeLiveSecurity — Sandworm & APT Activity Report Q2–Q3 2025','https://www.welivesecurity.com/en/eset-research/dynowiper-update-technical-analysis-attribution/'],
+['SecurityWeek — Destructive Russian cyberattacks on Ukraine expand to grain sector','https://www.securityweek.com/destructive-russian-cyberattacks-on-ukraine-expand-to-grain-sector/'],
+['Cisco Talos (via SecurityOnline) — Lotus Blossom Sagerunex (Feb 2025)','https://securityonline.info/lotus-blossom-hackers-target-southeast-asia-with-sagerunex-backdoor/'],
+['Symantec (via Ground News) — Lotus Panda hacks SE Asian governments (Apr 2025)','https://ground.news/article/lotus-panda-hacks-se-asian-governments-with-browser-stealers-and-sideloaded-malware'],
+['CoinGape — Indodax hack, Lazarus suspected (Sep 2024)','https://coingape.com/indonesian-exchange-loses-millions-of-dollars-following-crypto-hack/'],
+["Cyble — North Korea's crypto theft operations (2026)",'https://cyble.com/blog/lazarus-group-bitrefill-cyberattack/'],
+['Palo Alto Unit 42 — Shadow Campaigns: TGR-STA-1030 (Feb 2026)','https://unit42.paloaltonetworks.com/shadow-campaigns-uncovering-global-espionage/'],
+['Trend Micro — Earth Lamia develops custom arsenal (May 2025)','https://www.trendmicro.com/en_us/research/25/e/earth-lamia.html'],
+['The Hacker News — China-linked hackers exploit SAP (May 2025)','https://thehackernews.com/2025/05/china-linked-hackers-exploit-sap-and.html'],
+['CybersecAsia — S-E Asia governments targeted by cyber espionage group (RagaSerpent/SideWinder, 2026)','https://cybersecasia.net/features/s-e-asia-governments-targeted-by-cyber-espionage-group/'],
+['Kaspersky — SideWinder pivot to nuclear infrastructure (Mar 2025)','https://www.kaspersky.com/about/press-releases/kaspersky-great-uncovers-sidewinder-apts-pivot-to-nuclear-infrastructure-targets'],
+['CSA Singapore — Media statement on responses to APTs (Jul 2025)','https://www.csa.gov.sg/news-events/press-releases/media-statement-on-our-responses-to-apts/'],
+['CSA Singapore — Operation CYBER GUARDIAN vs UNC3886 (Feb 2026)','https://csa.gov.sg/news-events/press-releases/largest-multi-agency-cyber-operation-mounted-to-counter-threat-posed-by-advanced-persistent-threat--apt--actor-unc3886-to-singapore-s-telecommunications-sector'],
+['Trend Micro — Earth Krahang exploits intergovernmental trust (Mar 2024)','https://www.trendmicro.com/en_us/research/24/c/earth-krahang.html']
+];
+const CHECKS=['Indonesia disebut eksplisit','Target pemerintah / penegak hukum','Aktif 2025–2026','Beroperasi di Asia Tenggara'];
+const LABEL={related:'Related',partial:'Partial',unrelated:'Unrelated'};
+const KEY='lab-cti-apt-profiling-v1';
+
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let mem={name:'',a:{}};
+try{const v=JSON.parse(localStorage.getItem(KEY)||'null');if(v&&typeof v==='object')mem=Object.assign(mem,v)}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(mem))}catch(e){}};
+const st=id=>mem.a[id]||(mem.a[id]={d:'',why:'',chk:[false,false,false,false]});
+let filter='all';
+function toast(m){let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2600)}
+
+// render
+$('#nav').innerHTML=ACTORS.map(a=>`<a href="#a${a.id}"><span class="n">${a.id}</span>${esc(a.name)}<span class="dot" id="dot${a.id}" aria-hidden="true"></span></a>`).join('');
+$('#actors').innerHTML=ACTORS.map(a=>`
+<article class="actor" id="a${a.id}" data-id="${a.id}">
+ <header class="a-head"><div><h2>${esc(a.name)}</h2><div class="sub">Actor ${a.id} — Threat Actor Profile</div></div><div class="tag">ACTOR-${a.id}<br>${esc(a.nexus)}</div></header>
+ <div class="decide">
+  <div class="q" id="q${a.id}">Apakah ${esc(a.name)} relevan bagi Kejaksaan RI?</div>
+  <div class="dbtns" role="group" aria-labelledby="q${a.id}">
+   <button type="button" class="dbtn r" data-d="related" aria-pressed="false">Related</button>
+   <button type="button" class="dbtn p" data-d="partial" aria-pressed="false">Partial</button>
+   <button type="button" class="dbtn u" data-d="unrelated" aria-pressed="false">Unrelated</button>
+  </div>
+  <div class="checks"><span>Bukti yang Anda temukan di laporan (opsional):</span>${CHECKS.map((c,i)=>`<label><input type="checkbox" data-c="${i}"> ${c}</label>`).join('')}</div>
+  <label class="sr" for="why${a.id}" style="position:absolute;left:-9999px">Alasan</label>
+  <textarea id="why${a.id}" placeholder="Alasan: bukti apa dari laporan yang mendukung keputusan Anda?"></textarea>
+  <div class="row"><span class="saved" aria-live="polite"></span><button type="button" class="linkbtn" data-clear>Hapus pilihan</button></div>
+ </div>
+ <div class="profile">
+  <section><div class="lbl">Identity</div><dl class="id">${a.idt.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></section>
+  <section><div class="lbl">Notable activity</div><ul class="tl">${a.act.map(([d,t,s])=>`<li><b>${esc(d)}</b><div>${esc(t)}<small>Source: ${esc(s)}</small></div></li>`).join('')}</ul></section>
+ </div>
+ <div class="tools"><div class="lbl">Known tools &amp; techniques</div><ul>${a.tools.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>
+ <div class="story"><div class="lbl">Report</div>${a.text.map(p=>`<p>${esc(p)}</p>`).join('')}</div>
+</article>`).join('');
+$('#refList').innerHTML=REFS.map(([t,u])=>`<li>${esc(t)}<br><a href="${esc(u)}" target="_blank" rel="noopener">${esc(u)}</a></li>`).join('');
+
+function paintActor(a){
+ const s=st(a.id),el=$('#a'+a.id);
+ el.classList.remove('related','partial','unrelated');if(s.d)el.classList.add(s.d);
+ el.querySelectorAll('.dbtn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.d===s.d));
+ el.querySelectorAll('[data-c]').forEach(c=>c.checked=!!s.chk[+c.dataset.c]);
+ const ta=el.querySelector('textarea');if(document.activeElement!==ta)ta.value=s.why;
+ const dot=$('#dot'+a.id);dot.className='dot'+(s.d?' '+s.d:'');
+}
+function paintAll(){
+ ACTORS.forEach(paintActor);
+ const cnt={related:0,partial:0,unrelated:0,none:0};
+ ACTORS.forEach(a=>{const d=st(a.id).d;cnt[d||'none']++});
+ for(const k in cnt)$('#c-'+k).textContent=cnt[k];
+ const done=10-cnt.none;$('#progTxt').textContent=`${done} dari 10 aktor dinilai`;$('#progBar').style.width=done*10+'%';
+ // filter
+ let shown=0;ACTORS.forEach(a=>{const d=st(a.id).d||'none';const vis=filter==='all'||filter===d;$('#a'+a.id).hidden=!vis;if(vis)shown++});
+ $('#noresult').hidden=shown>0;
+ // summary
+ $('#sumBody').innerHTML=ACTORS.map(a=>{const s=st(a.id);return `<tr><td class="mono">${a.id}</td><td><a href="#a${a.id}" style="color:inherit">${esc(a.name)}</a></td><td>${s.d?`<span class="pill ${s.d}">${LABEL[s.d]}</span>`:'<span class="pill none">Belum</span>'}</td><td class="why${s.why.trim()?'':' empty'}">${s.why.trim()?esc(s.why.trim()):'—'}</td></tr>`}).join('');
+ $('#sumWho').textContent=mem.name.trim()?`Peserta: ${mem.name.trim()}`:'';
+}
+$('#pname').value=mem.name||'';
+$('#pname').addEventListener('input',e=>{mem.name=e.target.value;save();$('#sumWho').textContent=mem.name.trim()?`Peserta: ${mem.name.trim()}`:''});
+
+$('#actors').addEventListener('click',e=>{
+ const art=e.target.closest('.actor');if(!art)return;const s=st(art.dataset.id);
+ const b=e.target.closest('.dbtn');
+ if(b){s.d=s.d===b.dataset.d?'':b.dataset.d;save();paintAll();flash(art);return}
+ if(e.target.closest('[data-clear]')){s.d='';save();paintAll();flash(art,'Pilihan dihapus')}
+});
+$('#actors').addEventListener('change',e=>{const c=e.target.closest('[data-c]');if(!c)return;const art=c.closest('.actor');st(art.dataset.id).chk[+c.dataset.c]=c.checked;save();flash(art)});
+$('#actors').addEventListener('input',e=>{if(e.target.tagName!=='TEXTAREA')return;const art=e.target.closest('.actor');st(art.dataset.id).why=e.target.value;save();clearTimeout(art._t);art._t=setTimeout(()=>{paintAll();flash(art)},400)});
+function flash(art,m){const s=art.querySelector('.saved');s.textContent=m||'Tersimpan';clearTimeout(s._t);s._t=setTimeout(()=>s.textContent='',1600)}
+
+$$('.chip').forEach(c=>c.addEventListener('click',()=>{filter=c.dataset.f;$$('.chip').forEach(x=>x.setAttribute('aria-pressed',x===c));paintAll();$('#actors').scrollIntoView({block:'start'})}));
+
+// export
+const rows=()=>ACTORS.map(a=>{const s=st(a.id);return [a.id,a.name,s.d?LABEL[s.d]:'',s.why.trim(),...CHECKS.map((_,i)=>s.chk[i]?'ya':'')]});
+$('#exportCsv').onclick=()=>{
+ const q=v=>{v=String(v??'');return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+ const head=['No','Actor','Related','Reason',...CHECKS];
+ const csv='﻿'+(mem.name.trim()?q('Peserta: '+mem.name.trim())+'\n':'')+[head,...rows()].map(r=>r.map(q).join(',')).join('\n')+'\n';
+ const nm='cti-apt-profiling'+(mem.name.trim()?'_'+mem.name.trim().replace(/[^\w-]+/g,'-'):'')+'.csv';
+ try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=nm;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast('CSV diunduh: '+nm)}catch(e){toast('Unduhan tidak didukung di tampilan ini')}
+};
+$('#copySum').onclick=async()=>{
+ const t=(mem.name.trim()?'Peserta: '+mem.name.trim()+'\n':'')+rows().map(r=>`${r[0]}. ${r[1]} — ${r[2]||'Belum'}${r[3]?': '+r[3]:''}`).join('\n');
+ try{await navigator.clipboard.writeText(t);toast('Ringkasan disalin')}catch(e){toast('Gagal menyalin; pilih teks tabel secara manual')}
+};
+$('#printBtn').onclick=()=>window.print();
+$('#resetBtn').onclick=()=>{$('#confirmBox').hidden=false;$('#resetBtn').hidden=true;$('#resetNo').focus()};
+$('#resetNo').onclick=()=>{$('#confirmBox').hidden=true;$('#resetBtn').hidden=false};
+$('#resetYes').onclick=()=>{mem.a={};save();$('#confirmBox').hidden=true;$('#resetBtn').hidden=false;ACTORS.forEach(a=>{$('#a'+a.id).querySelector('textarea').value=''});paintAll();toast('Semua jawaban dihapus')};
+
+paintAll();
+</script>
+</body>
+</html>
