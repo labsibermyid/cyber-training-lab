@@ -81,9 +81,9 @@ window.LAB_SECTIONS = [
     facts: [['11', 'barang bukti'], ['Autopsy', 'alat utama']],
     lab: 'digital-forensic/',
     slides: 'presentasi/?d=digital-forensic',
-    slidesCount: 402,
+    slidesCount: 401,
     pdf: [
-      { name: 'Digital Forensics', href: 'digital-forensic/materi/Digital-Forensics.pdf', size: '1,7 MB · 402 halaman' }
+      { name: 'Digital Forensics', href: 'digital-forensic/materi/Digital-Forensics.pdf', size: '1,7 MB · 401 halaman' }
     ],
     sample: []
   },
