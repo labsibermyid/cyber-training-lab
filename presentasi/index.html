@@ -169,10 +169,10 @@ function fail(msg){$('bigTitle').textContent='Presentasi tidak ditemukan';$('met
 if(!slug){fail('Buka presentasi dari menu di halaman utama.');return}
 const HOME='../#'+slug;$('homeBtn').href=HOME;
 
-addScript(base+'deck.js?v=3').then(init).catch(()=>fail('Data presentasi untuk section ini belum diunggah.'));
+addScript(base+'deck.js?v=4').then(init).catch(()=>fail('Data presentasi untuk section ini belum diunggah.'));
 
 function chunkOf(i){return M.chunks.findIndex(c=>i>=c.from&&i<c.from+c.count)}
-function ensure(i){const k=chunkOf(i);if(k<0)return Promise.resolve();const c=M.chunks[k];if(loaded.has(k))return c.p||Promise.resolve();loaded.add(k);c.p=addScript(base+c.file+'?v=3');return c.p}
+function ensure(i){const k=chunkOf(i);if(k<0)return Promise.resolve();const c=M.chunks[k];if(loaded.has(k))return c.p||Promise.resolve();loaded.add(k);c.p=addScript(base+c.file+'?v=4');return c.p}
 function chapterAt(i){let c=null;for(const ch of M.chapters)if(ch.page-1<=i)c=ch;return c}
 
 function init(){
