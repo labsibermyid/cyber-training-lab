@@ -1,5 +1,5 @@
 /*
-  DAFTAR MATERI labsiber.pro
+  DAFTAR MATERI LAB
   ==========================
   Halaman utama dibangun dari daftar ini. Untuk menambah materi PDF atau sample,
   cukup ubah file ini (bisa langsung lewat GitHub: buka file > ikon pensil > Commit).
@@ -21,14 +21,14 @@
     sample    daftar file sample:  { name: 'Judul', href: '...', size: '...', note: 'Password ZIP: infected' }
               href boleh berupa link luar (GitHub Release, Google Drive) untuk file besar.
 */
-window.LABSIBER_SECTIONS = [
+window.LAB_SECTIONS = [
   {
     slug: 'cti-apt-profiling',
     title: 'Cyber Threat Intelligence',
     short: 'CTI',
     status: 'ready',
     summary: 'Membaca laporan APT dan menentukan grup mana yang relevan bagi organisasi.',
-    detail: 'Sepuluh profil grup APT dari laporan open source. Untuk setiap grup, peserta memutuskan Related, Partial, atau Unrelated bagi Kejaksaan RI dan menuliskan alasannya. Ringkasan prioritas terisi otomatis dan bisa diunduh.',
+    detail: 'Sepuluh profil grup APT dari laporan open source. Untuk setiap grup, peserta memutuskan Related, Partial, atau Unrelated bagi organisasi peserta dan menuliskan alasannya. Ringkasan prioritas terisi otomatis dan bisa diunduh.',
     facts: [['10', 'grup APT'], ['17', 'sumber laporan']],
     lab: 'cti-apt-profiling/',
     pdf: [],
