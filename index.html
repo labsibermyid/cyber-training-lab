@@ -225,7 +225,7 @@ body.on-title #tint{background:linear-gradient(180deg,transparent 40%,#1b0f33cc 
  <div class="bar"><i></i></div>
 </div>
 
-<script src="materi.js?v=20261125h"></script>
+<script src="materi.js?v=20261125t"></script>
 <script>
 (()=>{
 const S=window.LAB_SECTIONS||window.LABSIBER_SECTIONS||[];
@@ -233,7 +233,10 @@ const S=window.LAB_SECTIONS||window.LABSIBER_SECTIONS||[];
 const AUTO={};
 function fmtSize(b){if(!b)return'';const mb=b/1048576;return mb>=1?mb.toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(b/1024))+' KB'}
 function sampleList(s){return s.sample.length?s.sample:(AUTO[s.slug]?[AUTO[s.slug]]:[])}
-S.forEach(s=>{s.sample=s.sample||[];if(s.sample.length)return;
+/* Tools: link Google Drive share diubah otomatis jadi link unduh langsung */
+function driveDirect(u){const m=String(u||'').match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:[^#]*&)?id=)([\w-]{10,})/);return m?'https://drive.google.com/uc?export=download&id='+m[1]:u}
+function toolList(s){return (s.tools||[]).filter(t=>t&&t.href)}
+S.forEach(s=>{s.tools=s.tools||[];s.sample=s.sample||[];if(s.sample.length)return;
  const href=s.slug+'/sample/sample.zip';
  fetch(href+'?t='+Date.now(),{method:'HEAD',cache:'no-store'}).then(r=>{if(!r.ok)return;
   AUTO[s.slug]={name:'Sample '+s.short,href,size:fmtSize(+r.headers.get('content-length')),note:s.sampleNote||'',dl:'Sample-'+s.short.replace(/\s+/g,'-')+'.zip',auto:true};
@@ -271,30 +274,31 @@ function itemsFor(){
    {label:'Presentasi',tag:s.slidesCount?String(s.slidesCount):'',disabled:!s.slides,act:()=>launch(s,s.slides,'Presentasi')},
    {label:'Materi PDF',tag:s.pdf.length?String(s.pdf.length):'',disabled:!s.pdf.length,act:()=>{fileKind='pdf';go('files',0)}},
    {label:'Sample',tag:sampleList(s).length?(AUTO[s.slug]&&!s.sample.length?(AUTO[s.slug].size||'ZIP'):String(sampleList(s).length)):'',disabled:!sampleList(s).length,act:()=>{const L=sampleList(s);if(L.length===1&&L[0].auto){openFile(L[0])}else{fileKind='sample';go('files',0)}}},
+   {label:'Tools',tag:toolList(s).length?String(toolList(s).length):'',disabled:!toolList(s).length,act:()=>{const L=toolList(s);if(L.length===1){openFile(L[0],'tool')}else{fileKind='tools';go('files',0)}}},
    {label:'Kembali',act:back}];
  }
- const arr=fileKind==='sample'?sampleList(s):s[fileKind];
- return arr.map(f=>({label:f.name,small:true,tag:f.size||'',act:()=>openFile(f)})).concat([{label:'Kembali',small:true,act:back}]);
+ const arr=fileKind==='sample'?sampleList(s):fileKind==='tools'?toolList(s):s[fileKind];
+ return arr.map(f=>({label:f.name,small:true,tag:f.size||'',act:()=>openFile(f,fileKind==='tools'?'tool':'')})).concat([{label:'Kembali',small:true,act:back}]);
 }
 function render(anim){
  const s=S[sec],its=itemsFor();
  document.documentElement.style.setProperty('--tint',TINT[s.slug]||'#e0368f');
  crumb.innerHTML=level==='main'?'Pilih section <small>'+S.length+' section, kerjakan berurutan</small>':
-  level==='sec'?esc(s.title)+' <small>Section '+(sec+1)+'</small>':esc(s.title)+' <small>'+(fileKind==='pdf'?'Materi PDF':'Sample')+'</small>';
+  level==='sec'?esc(s.title)+' <small>Section '+(sec+1)+'</small>':esc(s.title)+' <small>'+({pdf:'Materi PDF',sample:'Sample',tools:'Tools'}[fileKind])+'</small>';
  list.innerHTML=its.map((it,i)=>`<button type="button" class="item${it.small?' small':''}" role="menuitem" data-i="${i}" aria-current="${i===idx}" ${it.disabled?'aria-disabled="true"':''} tabindex="${i===idx?0:-1}">${it.n?`<span class="n">${it.n}</span>`:''}<span>${esc(it.label)}</span>${it.tag?`<span class="tag">${esc(it.tag)}</span>`:''}</button>`).join('');
  if(anim){const m=$('menu');m.classList.remove('enter');void m.offsetWidth;m.classList.add('enter')}
  paintCard(true);
 }
 function paintCard(swap){
  const s=S[level==='main'?idx:sec];
- const has=[!!s.lab,!!s.slides,s.pdf.length>0,sampleList(s).length>0];
+ const has=[!!s.lab,!!s.slides,s.pdf.length>0,sampleList(s).length>0,toolList(s).length>0];
  let body;
  if(level==='files'){
-  const arr=fileKind==='sample'?sampleList(s):s[fileKind],f=arr[idx];
-  body=f?`<p>${esc(f.name)}${f.size?' · '+esc(f.size):''}</p>${f.note?`<p style="margin-top:8px"><b>${esc(f.note)}</b></p>`:''}${fileKind==='sample'?'<p style="margin-top:10px;font-size:14px">Buka sample hanya di mesin virtual latihan.</p>':''}`:'<p>Kembali ke menu section.</p>';
+  const arr=fileKind==='sample'?sampleList(s):fileKind==='tools'?toolList(s):s[fileKind],f=arr[idx];
+  body=f?`<p>${esc(f.name)}${f.size?' · '+esc(f.size):''}</p>${f.note?`<p style="margin-top:8px"><b>${esc(f.note)}</b></p>`:''}${fileKind==='sample'?'<p style="margin-top:10px;font-size:14px">Buka sample hanya di mesin virtual latihan.</p>':''}${fileKind==='tools'?'<p style="margin-top:10px;font-size:14px">Tekan Enter atau ketuk untuk mengunduh. Pasang di mesin virtual latihan.</p>':''}`:'<p>Kembali ke menu section.</p>';
  }else{
   body=`<p>${esc(s.status==='ready'?s.summary:'Section ini sedang disiapkan.')}</p>
-  <div class="chips"><span class="chip ${has[0]?'on':''}"><i></i>Lab</span><span class="chip ${has[1]?'on':''}"><i></i>Presentasi${has[1]?' ('+s.slidesCount+')':''}</span><span class="chip ${has[2]?'on':''}"><i></i>Materi PDF${has[2]?' ('+s.pdf.length+')':''}</span><span class="chip ${has[3]?'on':''}"><i></i>Sample${has[3]?' ('+sampleList(s).length+')':''}</span></div>`;
+  <div class="chips"><span class="chip ${has[0]?'on':''}"><i></i>Lab</span><span class="chip ${has[1]?'on':''}"><i></i>Presentasi${has[1]?' ('+s.slidesCount+')':''}</span><span class="chip ${has[2]?'on':''}"><i></i>Materi PDF${has[2]?' ('+s.pdf.length+')':''}</span><span class="chip ${has[3]?'on':''}"><i></i>Sample${has[3]?' ('+sampleList(s).length+')':''}</span><span class="chip ${has[4]?'on':''}"><i></i>Tools${has[4]?' ('+toolList(s).length+')':''}</span></div>`;
  }
  card.innerHTML=`<span class="slash"></span><svg class="glyph" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GLYPH[s.slug]||''}</svg>
   <div class="k">Section ${S.indexOf(s)+1}${s.status==='ready'?'':' · Segera'}</div><h2>${esc(s.short)}</h2>${body}`;
@@ -309,12 +313,13 @@ function move(to,focus=true){
  paintCard(level!=='sec');
 }
 function go(lv,i){level=lv;idx=i;render(true);focusCur();if(lv!=='files')syncHash()}
-function back(){if(level==='files'){go('sec',fileKind==='pdf'?2:3)}else if(level==='sec'){level='main';idx=sec;render(true);focusCur();syncHash(true)}else{showTitle()}}
+function back(){if(level==='files'){go('sec',{pdf:2,sample:3,tools:4}[fileKind])}else if(level==='sec'){level='main';idx=sec;render(true);focusCur();syncHash(true)}else{showTitle()}}
 function activate(i){const it=itemsFor()[i];if(!it||it.disabled)return;it.act()}
 function focusCur(){list.querySelectorAll('.item')[idx]?.focus()}
 function syncHash(main){const h=main?'':'#'+S[sec].slug;if(location.hash!==h)history.replaceState(null,'',location.pathname+h)}
-function openFile(f){if(/^https?:/.test(f.href)||/\.pdf$/i.test(f.href))window.open(f.href,'_blank','noopener');else{const a=document.createElement('a');a.href=f.href;a.download=f.dl||'';if(f.auto)toast('Mengunduh '+f.name+(f.size?' ('+f.size+')':'')+(f.note?'. '+f.note:''));document.body.appendChild(a);a.click();a.remove()}}
-function toast(msg){let t=document.getElementById('dlToast');if(!t){t=document.createElement('div');t.id='dlToast';t.setAttribute('role','status');t.style.cssText='position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:60;background:#21123a;color:#f1e9f7;border:1px solid #f0479e;border-radius:12px;padding:12px 18px;font:600 15px/1.4 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.45);max-width:90vw;text-align:center;transition:opacity .3s';document.body.appendChild(t)}t.textContent=msg+' — buka hanya di mesin virtual latihan.';t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>{t.style.opacity='0'},4200)}
+function openFile(f,kind){if(kind==='tool'){const u=driveDirect(f.href);toast('Mengunduh '+f.name+(f.size?' ('+f.size+')':'')+(f.note?'. '+f.note:''),'tool');window.open(u,'_blank','noopener');return}
+ if(/^https?:/.test(f.href)||/\.pdf$/i.test(f.href))window.open(f.href,'_blank','noopener');else{const a=document.createElement('a');a.href=f.href;a.download=f.dl||'';if(f.auto)toast('Mengunduh '+f.name+(f.size?' ('+f.size+')':'')+(f.note?'. '+f.note:''));document.body.appendChild(a);a.click();a.remove()}}
+function toast(msg,kind){let t=document.getElementById('dlToast');if(!t){t=document.createElement('div');t.id='dlToast';t.setAttribute('role','status');t.style.cssText='position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:60;background:#21123a;color:#f1e9f7;border:1px solid #f0479e;border-radius:12px;padding:12px 18px;font:600 15px/1.4 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.45);max-width:90vw;text-align:center;transition:opacity .3s';document.body.appendChild(t)}t.textContent=msg+(kind==='tool'?'. Jika Google Drive menampilkan peringatan, klik "Download anyway".':' — buka hanya di mesin virtual latihan.');t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>{t.style.opacity='0'},4200)}
 function launch(s,url,kind){
  url=url||s.lab;
  if(reduce){location.href=url;return}

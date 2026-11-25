@@ -25,6 +25,15 @@
               Opsional: isi daftar manual { name, href, size, note } bila sample lebih dari satu
               atau disimpan di luar (GitHub Release, Google Drive).
     sampleNote  catatan yang muncul saat sample diunduh, mis. 'Password ZIP: infected'
+    tools     daftar tools yang perlu diunduh peserta. Tempel link share Google Drive apa adanya
+              (mis. https://drive.google.com/file/d/XXXX/view?usp=sharing); halaman akan
+              mengubahnya otomatis jadi link unduh langsung. Pastikan akses file di Drive:
+              "Siapa saja yang memiliki link". Contoh:
+                tools: [
+                  { name: 'Autopsy 4.21', href: 'https://drive.google.com/file/d/XXXX/view?usp=sharing', size: '1,1 GB', note: 'Windows 64-bit' }
+                ]
+              Satu tool: tombol Tools langsung mengunduh. Lebih dari satu: muncul daftar pilihan.
+              Biarkan [] bila section tidak butuh tools (tombol Tools nonaktif).
 */
 window.LAB_SECTIONS = [
   {
@@ -41,7 +50,10 @@ window.LAB_SECTIONS = [
     pdf: [
       { name: 'Cyber Threat Intelligence (versi presentasi)', href: 'cti-apt-profiling/materi/Cyber-Threat-Intelligence.pdf', size: '1,2 MB · 121 halaman' }
     ],
-    sample: []
+    sample: [],
+    tools: [
+      // { name: 'Nama Tool', href: 'LINK_GOOGLE_DRIVE', size: '', note: '' }
+    ]
   },
   {
     slug: 'threat-hunting-lab',
@@ -57,7 +69,10 @@ window.LAB_SECTIONS = [
     pdf: [
       { name: 'Cyber Threat Hunting', href: 'threat-hunting-lab/materi/Threat-Hunting.pdf', size: '0,4 MB · 49 halaman' }
     ],
-    sample: []
+    sample: [],
+    tools: [
+      // { name: 'Nama Tool', href: 'LINK_GOOGLE_DRIVE', size: '', note: '' }
+    ]
   },
   {
     slug: 'malware-analysis',
@@ -73,7 +88,10 @@ window.LAB_SECTIONS = [
     pdf: [
       { name: 'Malware Analysis: Teori', href: 'malware-analysis/materi/Malware-Analysis-Teori.pdf', size: '1,5 MB · 95 halaman' }
     ],
-    sample: []
+    sample: [],
+    tools: [
+      // { name: 'Nama Tool', href: 'LINK_GOOGLE_DRIVE', size: '', note: '' }
+    ]
   },
   {
     slug: 'digital-forensic',
@@ -89,7 +107,10 @@ window.LAB_SECTIONS = [
     pdf: [
       { name: 'Digital Forensics', href: 'digital-forensic/materi/Digital-Forensics.pdf', size: '1,7 MB · 401 halaman' }
     ],
-    sample: []
+    sample: [],
+    tools: [
+      // { name: 'Nama Tool', href: 'LINK_GOOGLE_DRIVE', size: '', note: '' }
+    ]
   },
   {
     slug: 'phishing',
@@ -102,7 +123,10 @@ window.LAB_SECTIONS = [
     lab: null,
     slides: null,
     pdf: [],
-    sample: []
+    sample: [],
+    tools: [
+      // { name: 'Nama Tool', href: 'LINK_GOOGLE_DRIVE', size: '', note: '' }
+    ]
   },
   {
     slug: 'incident-response',
@@ -115,6 +139,9 @@ window.LAB_SECTIONS = [
     lab: null,
     slides: null,
     pdf: [],
-    sample: []
+    sample: [],
+    tools: [
+      // { name: 'Nama Tool', href: 'LINK_GOOGLE_DRIVE', size: '', note: '' }
+    ]
   }
 ];
