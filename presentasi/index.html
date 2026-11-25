@@ -106,7 +106,34 @@ body.menu-open .stage,body.menu-open .top,body.menu-open .bottom{visibility:hidd
  .chap{display:none}
  .top .tbtn span{display:none}
 }
+
+/* ===== tampilan biasa ===== */
+html.tema-biasa{--pb-bg:#f4f5f7;--pb-ink:#1f2430;--pb-mute:#5b6475;--pb-card:#fff;--pb-line:#d9dde4;--pb-acc:#2f5fd0;--pb-sel:#e6edfb;--neon:var(--pb-acc);--gold:var(--pb-acc);--f-disp:"IBM Plex Sans",system-ui,sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){html.tema-biasa{--pb-bg:#16181d;--pb-ink:#e6e8ec;--pb-mute:#9aa3b2;--pb-card:#1f2229;--pb-line:#2e323b;--pb-acc:#7aa2ff;--pb-sel:#253252;color-scheme:dark}}
+html.tema-biasa body{background:var(--pb-bg);color:var(--pb-ink)}
+html.tema-biasa .bg{background:var(--pb-bg)}html.tema-biasa .bg::after,html.tema-biasa .palms{display:none}
+html.tema-biasa .top{background:var(--pb-bg);border-bottom:1px solid var(--pb-line)}
+html.tema-biasa .bottom{background:var(--pb-bg);border-top:1px solid var(--pb-line)}
+html.tema-biasa .deckname,html.tema-biasa .count,html.tema-biasa .loading{font-style:normal;font-weight:700;text-transform:none}
+html.tema-biasa .tbtn,html.tema-biasa .arr{background:var(--pb-card);color:var(--pb-ink);border:1px solid var(--pb-line)}
+html.tema-biasa .tbtn:hover,html.tema-biasa .arr:hover{background:var(--pb-sel)}
+html.tema-biasa .tbtn kbd,html.tema-biasa .hint kbd{background:var(--pb-bg);color:var(--pb-ink);border:1px solid var(--pb-line)}
+html.tema-biasa .frame{box-shadow:0 0 0 1px var(--pb-line),0 10px 30px #00000026;border-radius:8px}
+html.tema-biasa .frame .wipe{display:none}
+html.tema-biasa .prog span{background:var(--pb-line)}html.tema-biasa .prog span i{background:var(--pb-acc)}
+html.tema-biasa .mission{display:none}
+html.tema-biasa .screen{background:var(--pb-bg)!important;color:var(--pb-ink)}
+html.tema-biasa .screen h1{font-style:normal;font-weight:700;font-size:clamp(36px,5vw,64px);line-height:1.05;text-transform:none;text-shadow:none}
+html.tema-biasa .screen .kick{color:var(--pb-acc)}
+html.tema-biasa .screen .meta b{font-style:normal;color:var(--pb-acc)}
+html.tema-biasa .mi{font:600 clamp(16px,1.6vw,20px)/1.25 var(--f-body);text-transform:none;color:var(--pb-ink);border-radius:8px}
+html.tema-biasa .mi.big{font-size:clamp(18px,2vw,24px)}
+html.tema-biasa .mi::before{background:var(--pb-sel);box-shadow:inset 3px 0 0 var(--pb-acc);border-radius:8px;transform:scaleX(0)}
+html.tema-biasa .mi[aria-current=true]{color:var(--pb-ink)}
+html.tema-biasa .mi[aria-current=true]::before{transform:scaleX(1)}
+html.tema-biasa :focus-visible{outline-color:var(--pb-acc)}
 </style>
+<script src="../tema/tema.js?v=1"></script>
 </head>
 <body>
 <div class="bg" aria-hidden="true">
@@ -117,6 +144,7 @@ body.menu-open .stage,body.menu-open .top,body.menu-open .bottom{visibility:hidd
 <header class="top">
  <div style="min-width:0"><div class="deckname" id="deckName">Presentasi</div><div class="chap" id="chapName"></div></div>
  <div class="sp"></div>
+ <button class="tbtn" type="button" data-tema-toggle aria-label="Ganti tampilan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg><span data-tema-label>Tampilan: Neon</span></button>
  <button class="tbtn" id="menuBtn" type="button" aria-label="Buka menu bab"><kbd>Esc</kbd><span>Menu</span></button>
  <button class="tbtn" id="fsBtn" type="button" aria-label="Layar penuh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span>Layar penuh</span></button>
  <a class="tbtn" href="../" id="homeBtn" aria-label="Kembali ke beranda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg><span>Beranda</span></a>
