@@ -225,7 +225,7 @@ body.on-title #tint{background:linear-gradient(180deg,transparent 40%,#1b0f33cc 
  <div class="bar"><i></i></div>
 </div>
 
-<script src="materi.js?v=20261125t"></script>
+<script src="materi.js?v=20261125u"></script>
 <script>
 (()=>{
 const S=window.LAB_SECTIONS||window.LABSIBER_SECTIONS||[];
@@ -317,9 +317,9 @@ function back(){if(level==='files'){go('sec',{pdf:2,sample:3,tools:4}[fileKind])
 function activate(i){const it=itemsFor()[i];if(!it||it.disabled)return;it.act()}
 function focusCur(){list.querySelectorAll('.item')[idx]?.focus()}
 function syncHash(main){const h=main?'':'#'+S[sec].slug;if(location.hash!==h)history.replaceState(null,'',location.pathname+h)}
-function openFile(f,kind){if(kind==='tool'){const u=driveDirect(f.href);toast('Mengunduh '+f.name+(f.size?' ('+f.size+')':'')+(f.note?'. '+f.note:''),'tool');window.open(u,'_blank','noopener');return}
+function openFile(f,kind){if(kind==='tool'){const u=driveDirect(f.href),fol=/\/folders\//.test(u);toast((fol?'Membuka folder '+f.name+' di tab baru. Klik tombol Download di Google Drive':'Mengunduh '+f.name+(f.size?' ('+f.size+')':'')+(f.note?'. '+f.note:'')),fol?'folder':'tool');window.open(u,'_blank','noopener');return}
  if(/^https?:/.test(f.href)||/\.pdf$/i.test(f.href))window.open(f.href,'_blank','noopener');else{const a=document.createElement('a');a.href=f.href;a.download=f.dl||'';if(f.auto)toast('Mengunduh '+f.name+(f.size?' ('+f.size+')':'')+(f.note?'. '+f.note:''));document.body.appendChild(a);a.click();a.remove()}}
-function toast(msg,kind){let t=document.getElementById('dlToast');if(!t){t=document.createElement('div');t.id='dlToast';t.setAttribute('role','status');t.style.cssText='position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:60;background:#21123a;color:#f1e9f7;border:1px solid #f0479e;border-radius:12px;padding:12px 18px;font:600 15px/1.4 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.45);max-width:90vw;text-align:center;transition:opacity .3s';document.body.appendChild(t)}t.textContent=msg+(kind==='tool'?'. Jika Google Drive menampilkan peringatan, klik "Download anyway".':' — buka hanya di mesin virtual latihan.');t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>{t.style.opacity='0'},4200)}
+function toast(msg,kind){let t=document.getElementById('dlToast');if(!t){t=document.createElement('div');t.id='dlToast';t.setAttribute('role','status');t.style.cssText='position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:60;background:#21123a;color:#f1e9f7;border:1px solid #f0479e;border-radius:12px;padding:12px 18px;font:600 15px/1.4 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.45);max-width:90vw;text-align:center;transition:opacity .3s';document.body.appendChild(t)}t.textContent=msg+(kind==='folder'?'. Drive akan mengemasnya jadi ZIP.':kind==='tool'?'. Jika Google Drive menampilkan peringatan, klik "Download anyway".':' — buka hanya di mesin virtual latihan.');t.style.opacity='1';clearTimeout(t._h);t._h=setTimeout(()=>{t.style.opacity='0'},4200)}
 function launch(s,url,kind){
  url=url||s.lab;
  if(reduce){location.href=url;return}

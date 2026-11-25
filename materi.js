@@ -32,6 +32,7 @@
                 tools: [
                   { name: 'Autopsy 4.21', href: 'https://drive.google.com/file/d/XXXX/view?usp=sharing', size: '1,1 GB', note: 'Windows 64-bit' }
                 ]
+              Link folder Drive (drive/folders/...) dibuka di tab baru; peserta klik Download di sana.
               Satu tool: tombol Tools langsung mengunduh. Lebih dari satu: muncul daftar pilihan.
               Biarkan [] bila section tidak butuh tools (tombol Tools nonaktif).
 */
@@ -52,7 +53,8 @@ window.LAB_SECTIONS = [
     ],
     sample: [],
     tools: [
-      // { name: 'Nama Tool', href: 'LINK_GOOGLE_DRIVE', size: '', note: '' }
+      { name: 'Lab for Windows', href: 'https://drive.google.com/drive/folders/1iWCWERwAXtMTfqHTpWtO1zsHGy78R5eU?usp=sharing', note: 'Windows' },
+      { name: 'Lab for Mac', href: 'https://drive.google.com/drive/folders/1YOQcpMzFQNO8x4diBKXE42DC6n7GepPf?usp=sharing', note: 'macOS' }
     ]
   },
   {
@@ -71,7 +73,8 @@ window.LAB_SECTIONS = [
     ],
     sample: [],
     tools: [
-      // { name: 'Nama Tool', href: 'LINK_GOOGLE_DRIVE', size: '', note: '' }
+      { name: 'Lab for Windows', href: 'https://drive.google.com/drive/folders/1OqZGPqeRRylr3weKtu5WbX8aZptBl9L1?usp=sharing', note: 'Windows' },
+      { name: 'Lab for Mac', href: 'https://drive.google.com/drive/folders/14mM_GMTp5n3T6B09K6GVrAWdC-RIDQ6l?usp=sharing', note: 'macOS' }
     ]
   },
   {
@@ -90,7 +93,8 @@ window.LAB_SECTIONS = [
     ],
     sample: [],
     tools: [
-      // { name: 'Nama Tool', href: 'LINK_GOOGLE_DRIVE', size: '', note: '' }
+      { name: 'Lab for Windows', href: 'https://drive.google.com/drive/folders/1C-ITHIEBuyGD0Oge-pk0M6es0RugUJM2?usp=sharing', note: 'Windows' },
+      { name: 'Lab for Mac', href: 'https://drive.google.com/drive/folders/1zWFbkq7zcLDg_tpu_5fm8IXbRbESh0fb?usp=sharing', note: 'macOS' }
     ]
   },
   {
@@ -109,7 +113,7 @@ window.LAB_SECTIONS = [
     ],
     sample: [],
     tools: [
-      // { name: 'Nama Tool', href: 'LINK_GOOGLE_DRIVE', size: '', note: '' }
+      { name: 'Lab for Windows', href: 'https://drive.google.com/drive/folders/1onViZdwYyjrARuPwpiiKSickYVvxyIqj?usp=sharing', note: 'Windows' }
     ]
   },
   {
