@@ -25,7 +25,7 @@
 html{scroll-behavior:smooth;scroll-padding-top:120px}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--f-body)}
-button,input,textarea{font:inherit;color:inherit}
+button{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 h1,h2,h3{font-family:var(--f-head);line-height:1.15;margin:0}
@@ -68,9 +68,6 @@ main{padding:0 28px 60px;max-width:1080px;width:100%}
 .legend b{display:block;font-size:14px}
 .lg-r{background:var(--rel-bg);color:var(--rel)}.lg-p{background:var(--par-bg);color:var(--par)}.lg-u{background:var(--unr-bg);color:var(--unr)}
 .legend span{color:var(--ink);opacity:.85}
-.who{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
-.who label{font-weight:600;font-size:14px}
-.who input{flex:1 1 240px;max-width:360px;height:38px;border:1px solid var(--line);border-radius:6px;padding:0 10px;background:var(--bg)}
 
 .actor{background:var(--paper);border:1px solid var(--line);border-radius:10px;margin-bottom:26px;overflow:hidden;border-left:5px solid var(--line)}
 .actor.related{border-left-color:var(--rel)}.actor.partial{border-left-color:var(--par)}.actor.unrelated{border-left-color:var(--unr)}
@@ -89,11 +86,6 @@ main{padding:0 28px 60px;max-width:1080px;width:100%}
 .dbtn.p[aria-pressed=true]{background:var(--par);border-color:var(--par);color:#fff}
 .dbtn.u[aria-pressed=true]{background:var(--unr);border-color:var(--unr);color:#fff}
 @media (prefers-color-scheme:dark){.dbtn[aria-pressed=true]{color:#111!important}}
-.checks{display:flex;flex-wrap:wrap;gap:6px 16px;margin:12px 0 8px;font-size:13.5px}
-.checks span{font-weight:600;width:100%;font-size:13px;color:var(--muted)}
-.checks label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
-.checks input{width:16px;height:16px;accent-color:var(--accent)}
-.decide textarea{width:100%;min-height:64px;border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--paper);resize:vertical;font-size:14px}
 .decide .row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px;font-size:12.5px;color:var(--muted)}
 .linkbtn{background:none;border:0;color:var(--accent);padding:2px 0;font-size:12.5px;text-decoration:underline}
 
@@ -123,8 +115,6 @@ dl.id dt{color:var(--muted);font-weight:500}
 table{border-collapse:collapse;width:100%;font-size:14px}
 th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
 th{background:var(--soft);font-weight:600;font-size:13px}
-td.why{white-space:pre-wrap;min-width:260px}
-td.empty{color:var(--muted);font-style:italic}
 .pill{display:inline-block;border-radius:999px;padding:1px 10px;font-size:12.5px;font-weight:600;white-space:nowrap}
 .pill.related{background:var(--rel-bg);color:var(--rel)}.pill.partial{background:var(--par-bg);color:var(--par)}.pill.unrelated{background:var(--unr-bg);color:var(--unr)}.pill.none{background:var(--soft);color:var(--muted)}
 .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
@@ -165,7 +155,7 @@ td.empty{color:var(--muted);font-style:italic}
 <body>
 <div class="shell">
 <aside>
- <div class="brand"><b>Lab CTI · Profiling APT</b><span>Kejaksaan RI · Participant copy</span></div>
+ <div class="brand"><b>Lab CTI · Profiling APT</b><span>Participant copy</span></div>
  <h4>Aktor</h4>
  <nav id="nav" aria-label="Daftar aktor"></nav>
  <h4>Lainnya</h4>
@@ -188,16 +178,15 @@ td.empty{color:var(--muted);font-style:italic}
 
  <div class="intro">
   <h1>Profiling and Prioritizing APT Groups</h1>
-  <p>Relevant to the Attorney General's Office of the Republic of Indonesia (Kejaksaan RI).</p>
+  <p>Organisasi yang dilindungi: instansi pemerintah di Indonesia yang menangani penegakan hukum.</p>
   <div class="meta"><span>Version 1.0 · November 2026</span><span>Audience: analysts, IT administrators, and intelligence staff</span><span>Classification: internal training material, compiled from OSINT</span></div>
-  <p style="color:var(--ink)"><b>Tugas:</b> baca profil dan laporan setiap aktor, lalu tentukan apakah aktor itu relevan bagi Kejaksaan RI. Pilih salah satu tombol di atas setiap aktor dan tulis alasannya. Hasilnya terkumpul otomatis di <a href="#summary" style="color:var(--accent)">Ringkasan prioritas</a>.</p>
+  <p style="color:var(--ink)"><b>Tugas:</b> baca profil dan laporan setiap aktor, lalu tentukan apakah aktor itu relevan bagi organisasi Anda. Pilih salah satu tombol di atas setiap aktor. Hasilnya terkumpul otomatis di <a href="#summary" style="color:var(--accent)">Ringkasan prioritas</a>.</p>
   <div class="legend">
-   <div class="lg-r"><b>Related</b><span>Bukti kuat aktor ini relevan bagi Kejaksaan RI.</span></div>
+   <div class="lg-r"><b>Related</b><span>Bukti kuat aktor ini relevan bagi organisasi Anda.</span></div>
    <div class="lg-p"><b>Partial</b><span>Sebagian kriteria terpenuhi, tetapi tidak semuanya.</span></div>
-   <div class="lg-u"><b>Unrelated</b><span>Tidak ada bukti relevansi bagi Kejaksaan RI.</span></div>
+   <div class="lg-u"><b>Unrelated</b><span>Tidak ada bukti relevansi bagi organisasi Anda.</span></div>
   </div>
   <p style="margin-top:12px;font-size:13.5px">Contoh dari modul: <b>Mustang Panda — Yes</b> · “Highly relevant: Indonesia confirmed, ministries/intelligence, active 2025”.</p>
-  <div class="who"><label for="pname">Nama peserta</label><input id="pname" autocomplete="name" placeholder="Tulis nama Anda (muncul di ekspor dan cetak)"></div>
  </div>
 
  <div id="actors"></div>
@@ -205,8 +194,8 @@ td.empty{color:var(--muted);font-style:italic}
 
  <section class="summary" id="summary">
   <h2>7. Priority Summary Sheet</h2>
-  <p>Terisi otomatis dari pilihan dan alasan Anda di atas. <span id="sumWho"></span></p>
-  <div class="tscroll"><table><thead><tr><th>No</th><th>Actor</th><th>Related</th><th>Reason</th></tr></thead><tbody id="sumBody"></tbody></table></div>
+  <p>Terisi otomatis dari pilihan Anda di atas.</p>
+  <div class="tscroll"><table><thead><tr><th>No</th><th>Actor</th><th>Pilihan</th></tr></thead><tbody id="sumBody"></tbody></table></div>
   <div class="acts">
    <button class="btn pri" id="exportCsv" type="button">Unduh CSV</button>
    <button class="btn" id="copySum" type="button">Salin ringkasan</button>
@@ -314,16 +303,15 @@ const REFS=[
 ['CSA Singapore — Operation CYBER GUARDIAN vs UNC3886 (Feb 2026)','https://csa.gov.sg/news-events/press-releases/largest-multi-agency-cyber-operation-mounted-to-counter-threat-posed-by-advanced-persistent-threat--apt--actor-unc3886-to-singapore-s-telecommunications-sector'],
 ['Trend Micro — Earth Krahang exploits intergovernmental trust (Mar 2024)','https://www.trendmicro.com/en_us/research/24/c/earth-krahang.html']
 ];
-const CHECKS=['Indonesia disebut eksplisit','Target pemerintah / penegak hukum','Aktif 2025–2026','Beroperasi di Asia Tenggara'];
 const LABEL={related:'Related',partial:'Partial',unrelated:'Unrelated'};
 const KEY='lab-cti-apt-profiling-v1';
 
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let mem={name:'',a:{}};
+let mem={a:{}};
 try{const v=JSON.parse(localStorage.getItem(KEY)||'null');if(v&&typeof v==='object')mem=Object.assign(mem,v)}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(mem))}catch(e){}};
-const st=id=>mem.a[id]||(mem.a[id]={d:'',why:'',chk:[false,false,false,false]});
+const st=id=>mem.a[id]||(mem.a[id]={d:''});
 let filter='all';
 function toast(m){let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2600)}
 
@@ -333,16 +321,13 @@ $('#actors').innerHTML=ACTORS.map(a=>`
 <article class="actor" id="a${a.id}" data-id="${a.id}">
  <header class="a-head"><div><h2>${esc(a.name)}</h2><div class="sub">Actor ${a.id} — Threat Actor Profile</div></div><div class="tag">ACTOR-${a.id}<br>${esc(a.nexus)}</div></header>
  <div class="decide">
-  <div class="q" id="q${a.id}">Apakah ${esc(a.name)} relevan bagi Kejaksaan RI?</div>
+  <div class="q" id="q${a.id}">Apakah ${esc(a.name)} relevan bagi organisasi Anda?</div>
   <div class="dbtns" role="group" aria-labelledby="q${a.id}">
    <button type="button" class="dbtn r" data-d="related" aria-pressed="false">Related</button>
    <button type="button" class="dbtn p" data-d="partial" aria-pressed="false">Partial</button>
    <button type="button" class="dbtn u" data-d="unrelated" aria-pressed="false">Unrelated</button>
   </div>
-  <div class="checks"><span>Bukti yang Anda temukan di laporan (opsional):</span>${CHECKS.map((c,i)=>`<label><input type="checkbox" data-c="${i}"> ${c}</label>`).join('')}</div>
-  <label class="sr" for="why${a.id}" style="position:absolute;left:-9999px">Alasan</label>
-  <textarea id="why${a.id}" placeholder="Alasan: bukti apa dari laporan yang mendukung keputusan Anda?"></textarea>
-  <div class="row"><span class="saved" aria-live="polite"></span><button type="button" class="linkbtn" data-clear>Hapus pilihan</button></div>
+  <div class="row"><span class="saved" aria-live="polite"></span><span>Klik pilihan yang sama sekali lagi untuk membatalkan.</span></div>
  </div>
  <div class="profile">
   <section><div class="lbl">Identity</div><dl class="id">${a.idt.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></section>
@@ -357,8 +342,6 @@ function paintActor(a){
  const s=st(a.id),el=$('#a'+a.id);
  el.classList.remove('related','partial','unrelated');if(s.d)el.classList.add(s.d);
  el.querySelectorAll('.dbtn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.d===s.d));
- el.querySelectorAll('[data-c]').forEach(c=>c.checked=!!s.chk[+c.dataset.c]);
- const ta=el.querySelector('textarea');if(document.activeElement!==ta)ta.value=s.why;
  const dot=$('#dot'+a.id);dot.className='dot'+(s.d?' '+s.d:'');
 }
 function paintAll(){
@@ -371,47 +354,41 @@ function paintAll(){
  let shown=0;ACTORS.forEach(a=>{const d=st(a.id).d||'none';const vis=filter==='all'||filter===d;$('#a'+a.id).hidden=!vis;if(vis)shown++});
  $('#noresult').hidden=shown>0;
  // summary
- $('#sumBody').innerHTML=ACTORS.map(a=>{const s=st(a.id);return `<tr><td class="mono">${a.id}</td><td><a href="#a${a.id}" style="color:inherit">${esc(a.name)}</a></td><td>${s.d?`<span class="pill ${s.d}">${LABEL[s.d]}</span>`:'<span class="pill none">Belum</span>'}</td><td class="why${s.why.trim()?'':' empty'}">${s.why.trim()?esc(s.why.trim()):'—'}</td></tr>`}).join('');
- $('#sumWho').textContent=mem.name.trim()?`Peserta: ${mem.name.trim()}`:'';
+ $('#sumBody').innerHTML=ACTORS.map(a=>{const s=st(a.id);return `<tr><td class="mono">${a.id}</td><td><a href="#a${a.id}" style="color:inherit">${esc(a.name)}</a></td><td>${s.d?`<span class="pill ${s.d}">${LABEL[s.d]}</span>`:'<span class="pill none">Belum</span>'}</td></tr>`}).join('');
 }
-$('#pname').value=mem.name||'';
-$('#pname').addEventListener('input',e=>{mem.name=e.target.value;save();$('#sumWho').textContent=mem.name.trim()?`Peserta: ${mem.name.trim()}`:''});
 
 $('#actors').addEventListener('click',e=>{
  const art=e.target.closest('.actor');if(!art)return;const s=st(art.dataset.id);
  const b=e.target.closest('.dbtn');
  if(b){s.d=s.d===b.dataset.d?'':b.dataset.d;save();paintAll();flash(art);return}
- if(e.target.closest('[data-clear]')){s.d='';save();paintAll();flash(art,'Pilihan dihapus')}
 });
-$('#actors').addEventListener('change',e=>{const c=e.target.closest('[data-c]');if(!c)return;const art=c.closest('.actor');st(art.dataset.id).chk[+c.dataset.c]=c.checked;save();flash(art)});
-$('#actors').addEventListener('input',e=>{if(e.target.tagName!=='TEXTAREA')return;const art=e.target.closest('.actor');st(art.dataset.id).why=e.target.value;save();clearTimeout(art._t);art._t=setTimeout(()=>{paintAll();flash(art)},400)});
 function flash(art,m){const s=art.querySelector('.saved');s.textContent=m||'Tersimpan';clearTimeout(s._t);s._t=setTimeout(()=>s.textContent='',1600)}
 
 $$('.chip').forEach(c=>c.addEventListener('click',()=>{filter=c.dataset.f;$$('.chip').forEach(x=>x.setAttribute('aria-pressed',x===c));paintAll();$('#actors').scrollIntoView({block:'start'})}));
 
 // export
-const rows=()=>ACTORS.map(a=>{const s=st(a.id);return [a.id,a.name,s.d?LABEL[s.d]:'',s.why.trim(),...CHECKS.map((_,i)=>s.chk[i]?'ya':'')]});
+const rows=()=>ACTORS.map(a=>{const s=st(a.id);return [a.id,a.name,s.d?LABEL[s.d]:'']});
 $('#exportCsv').onclick=()=>{
  const q=v=>{v=String(v??'');return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
- const head=['No','Actor','Related','Reason',...CHECKS];
- const csv='﻿'+(mem.name.trim()?q('Peserta: '+mem.name.trim())+'\n':'')+[head,...rows()].map(r=>r.map(q).join(',')).join('\n')+'\n';
- const nm='cti-apt-profiling'+(mem.name.trim()?'_'+mem.name.trim().replace(/[^\w-]+/g,'-'):'')+'.csv';
+ const head=['No','Actor','Pilihan'];
+ const csv='\ufeff'+[head,...rows()].map(r=>r.map(q).join(',')).join('\n')+'\n';
+ const nm='cti-apt-profiling.csv';
  try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=nm;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast('CSV diunduh: '+nm)}catch(e){toast('Unduhan tidak didukung di tampilan ini')}
 };
 $('#copySum').onclick=async()=>{
- const t=(mem.name.trim()?'Peserta: '+mem.name.trim()+'\n':'')+rows().map(r=>`${r[0]}. ${r[1]} — ${r[2]||'Belum'}${r[3]?': '+r[3]:''}`).join('\n');
+ const t=rows().map(r=>`${r[0]}. ${r[1]} — ${r[2]||'Belum'}`).join('\n');
  try{await navigator.clipboard.writeText(t);toast('Ringkasan disalin')}catch(e){toast('Gagal menyalin; pilih teks tabel secara manual')}
 };
 $('#printBtn').onclick=()=>window.print();
 $('#resetBtn').onclick=()=>{$('#confirmBox').hidden=false;$('#resetBtn').hidden=true;$('#resetNo').focus()};
 $('#resetNo').onclick=()=>{$('#confirmBox').hidden=true;$('#resetBtn').hidden=false};
-$('#resetYes').onclick=()=>{mem.a={};save();$('#confirmBox').hidden=true;$('#resetBtn').hidden=false;ACTORS.forEach(a=>{$('#a'+a.id).querySelector('textarea').value=''});paintAll();toast('Semua jawaban dihapus')};
+$('#resetYes').onclick=()=>{mem.a={};save();$('#confirmBox').hidden=true;$('#resetBtn').hidden=false;paintAll();toast('Semua jawaban dihapus')};
 
 paintAll();
 </script>
 
-<!-- labsiber: tombol kembali ke beranda -->
-<a id="lsb-home" href="../" aria-label="Kembali ke beranda labsiber.pro"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Beranda</span></a>
+<!-- tombol kembali ke beranda -->
+<a id="lsb-home" href="../" aria-label="Kembali ke beranda"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Beranda</span></a>
 <style>#lsb-home{position:fixed;right:18px;bottom:18px;z-index:2147483000;display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 14px 0 12px;border-radius:999px;background:#22163a;color:#fff!important;font:600 13.5px/1 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none!important;box-shadow:0 6px 18px rgba(27,15,51,.35),inset 0 -2px 0 #e0368f;transition:background .15s}#lsb-home:hover{background:#e0368f}#lsb-home:focus-visible{outline:3px solid #ffd27a;outline-offset:2px}@media print{#lsb-home{display:none}}</style>
 </body>
 </html>
