@@ -43,7 +43,9 @@ window.LAB_SECTIONS = [
     detail: 'Satu kasus di jaringan fiktif Nusantara: log firewall 30 hari, salinan bukti lima host untuk dipindai dengan Loki-RS, dan event log Windows untuk Hayabusa. Peserta menyusun IOC dari laporan APT, memperbaiki aturan Sigma, lalu menulis laporan singkat.',
     facts: [['3', 'alat: Firewall, Loki-RS, Hayabusa'], ['4', 'bagian tugas']],
     lab: 'threat-hunting-lab/',
-    pdf: [],
+    pdf: [
+      { name: 'Cyber Threat Hunting', href: 'threat-hunting-lab/materi/Threat-Hunting.pdf', size: '0,4 MB · 49 halaman' }
+    ],
     sample: []
   },
   {
@@ -55,7 +57,9 @@ window.LAB_SECTIONS = [
     detail: 'Latihan dari Section 3 sampai Section 8: triage dan analisis statis, analisis kode dan skrip, analisis dinamis, analisis jaringan, dan latihan akhir. Setiap pertanyaan punya jawaban pasti yang diperiksa otomatis.',
     facts: [['36', 'latihan'], ['292', 'soal']],
     lab: 'malware-analysis/',
-    pdf: [],
+    pdf: [
+      { name: 'Malware Analysis: Teori', href: 'malware-analysis/materi/Malware-Analysis-Teori.pdf', size: '1,5 MB · 95 halaman' }
+    ],
     sample: []
   },
   {
@@ -67,7 +71,9 @@ window.LAB_SECTIONS = [
     detail: 'Sebelas barang bukti dari satu perkara fiktif, mulai dari flashdisk pelaku phishing, laptop korban BEC, sampai ujian akhir di file server. Setiap barang bukti punya skenario, pertanyaan penyidik, dan tingkat kesulitan.',
     facts: [['11', 'barang bukti'], ['Autopsy', 'alat utama']],
     lab: 'digital-forensic/',
-    pdf: [],
+    pdf: [
+      { name: 'Digital Forensics', href: 'digital-forensic/materi/Digital-Forensics.pdf', size: '1,7 MB · 402 halaman' }
+    ],
     sample: []
   },
   {

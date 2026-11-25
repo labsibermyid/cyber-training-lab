@@ -225,7 +225,7 @@ body.on-title #tint{background:linear-gradient(180deg,transparent 40%,#1b0f33cc 
  <div class="bar"><i></i></div>
 </div>
 
-<script src="materi.js?v=20261125b"></script>
+<script src="materi.js?v=20261125d"></script>
 <script>
 (()=>{
 const S=window.LAB_SECTIONS||window.LABSIBER_SECTIONS||[];
@@ -302,7 +302,7 @@ function back(){if(level==='files'){go('sec',fileKind==='pdf'?1:2)}else if(level
 function activate(i){const it=itemsFor()[i];if(!it||it.disabled)return;it.act()}
 function focusCur(){list.querySelectorAll('.item')[idx]?.focus()}
 function syncHash(main){const h=main?'':'#'+S[sec].slug;if(location.hash!==h)history.replaceState(null,'',location.pathname+h)}
-function openFile(f){if(/^https?:/.test(f.href))window.open(f.href,'_blank','noopener');else{const a=document.createElement('a');a.href=f.href;a.download='';document.body.appendChild(a);a.click();a.remove()}}
+function openFile(f){if(/^https?:/.test(f.href)||/\.pdf$/i.test(f.href))window.open(f.href,'_blank','noopener');else{const a=document.createElement('a');a.href=f.href;a.download='';document.body.appendChild(a);a.click();a.remove()}}
 function launch(s){
  if(reduce){location.href=s.lab;return}
  const L=$('loading'),t=TIPS[Math.floor(Math.random()*TIPS.length)];
