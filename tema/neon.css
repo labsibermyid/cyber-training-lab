@@ -1,0 +1,116 @@
+/* Tema senja-neon untuk halaman lab.
+   Dipasang di akhir <body> setiap lab: <link rel="stylesheet" href="../tema/neon.css?v=1">
+   Hanya menimpa warna, huruf, dan latar; tata letak dan fungsi lab tidak diubah. */
+@import url("https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+
+/* ---------- token warna (lembar kerja MA, DF, CTI) ---------- */
+:root,
+:root[data-theme="light"],
+:root[data-theme="dark"],
+:root:not([data-theme="light"]) {
+  color-scheme: dark;
+  --bg: #170c2c;
+  --paper: #21123a;
+  --soft: #2b1a4a;
+  --ink: #f1e9f7;
+  --muted: #b6a8ca;
+  --line: #3d2865;
+  --accent: #f0479e;
+  --accent-soft: #3b1740;
+  --tag: #ffd27a;
+  --tag-ink: #2a1500;
+  --lv-d: #5fe3c0; --lv-d-bg: #12363a;
+  --lv-m: #ffc46b; --lv-m-bg: #3a2814;
+  --lv-s: #ff7a8a; --lv-s-bg: #3d1626;
+  --done: #5fe3c0;
+  /* lab CTI */
+  --side: #120926; --side-ink: #d9cbe8;
+  --rel: #ff6b9a; --rel-bg: #3d1626;
+  --par: #ffc46b; --par-bg: #3a2814;
+  --unr: #a9b7d6; --unr-bg: #262a48;
+  /* Threat Hunting: aplikasi Firewall */
+  --panel: #21123a; --mute: #b6a8ca; --sideink: #d9cbe8;
+  --acc: #f0479e; --accbg: #3b1740;
+  --red: #ff6b8a; --redbg: #3d1626; --amber: #ffc46b;
+  --row: #1c1033; --sel: #3b1d5c;
+  --f-head: "Big Shoulders Display", "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+}
+
+/* latar: malam dengan pendaran senja di bawah + scanline halus */
+html { background: #170c2c; }
+body {
+  background:
+    radial-gradient(90% 45% at 50% 115%, rgba(255, 138, 61, .20), transparent 60%),
+    radial-gradient(70% 40% at 50% 108%, rgba(224, 54, 143, .26), transparent 65%),
+    #170c2c fixed !important;
+  color: var(--ink);
+}
+body::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 2147482000;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0, 0, 0, .10) 3px 4px);
+}
+@media print { body::after { display: none; } body { background: #fff !important; } }
+
+/* judul bergaya poster */
+h1, h2 { font-family: var(--f-head); font-style: italic; font-weight: 900; letter-spacing: .005em; }
+h1 { text-shadow: 0 3px 0 #e0368f, 0 0 28px rgba(224, 54, 143, .35); }
+::selection { background: #f0479e; color: #fff; }
+
+/* tombol & tautan utama */
+a { color: inherit; }
+input, textarea, select { color: var(--ink); }
+
+/* ---------- lab CTI ---------- */
+body:has(#actors) .a-head { background: linear-gradient(100deg, #3a1466, #7a1f6e 55%, #b8335f) !important; }
+body:has(#actors) .a-head h2 { font-size: 32px; text-shadow: 0 3px 0 #e0368f; }
+body:has(#actors) .dbtn { background: var(--paper); }
+body:has(#actors) .intro, body:has(#actors) .summary, body:has(#actors) .actor { box-shadow: 8px 10px 0 rgba(224, 54, 143, .25); }
+body:has(#actors) aside { background: #120926; border-right: 1px solid #2d1a4f; }
+
+/* ---------- Threat Hunting Lab: desktop ---------- */
+body:has(#desk) .wall {
+  background:
+    radial-gradient(55% 45% at 64% 78%, #ffd27a 0%, #ff8a3d 18%, rgba(224, 54, 143, .0) 52%),
+    radial-gradient(80% 60% at 50% 100%, rgba(224, 54, 143, .65), transparent 70%),
+    linear-gradient(180deg, #170c2c 0%, #2b1250 38%, #6e1f6e 66%, #c23a6a 84%, #ff8a3d 100%) !important;
+}
+body:has(#desk) .wall { isolation: isolate; }
+body:has(#desk) .wall::before {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 34%; pointer-events: none; z-index: -1;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 300' preserveAspectRatio='xMidYMax slice'><path fill='%234a1a6e' opacity='.9' d='M0 210V150h40v-30h30v30h24v-60h36v60h30v-90h44v90h26v-40h40v40h30v-120h18v-20h20v20h18v120h40v-50h34v50h28v-70h44v70h26v-30h30v30h40v-100h22v-16h24v16h22v100h30v-40h48v40h30v-60h36v60h40v-140h16v-24h12v24h16v140h34v-50h40v50h30v-80h48v80h24v-36h44v36h30v-110h20v-18h26v18h20v110h34v-46h36v46h28v-66h40v66h30v-30h46v30h36v-90h50v90h40V210z'/><rect y='210' width='1600' height='90' fill='%23140b29'/><g fill='%230d0620'><path d='M150 300c6-60 4-120 26-185l9 2c-18 60-15 120-17 183z'/><path d='M180 116c-40-26-96-30-142-16 46-5 92 5 132 26zM184 114c-10-44-46-80-92-92 38 20 70 52 82 96zM186 112c28-40 78-62 130-58-48 9-92 30-120 64zM184 118c42-12 92-4 128 24-40-18-88-22-124-16z'/><path d='M1460 300c-6-70-2-140-28-205l-9 3c22 66 20 134 23 202z'/><path d='M1430 96c40-30 100-38 150-22-50-5-102 8-142 30zM1426 94c8-50 48-88 98-102-40 22-76 58-88 106zM1424 92c-32-44-86-66-140-60 50 9 98 32 128 68zM1426 98c-46-12-100-2-140 28 44-20 96-24 134-18z'/></g></svg>") bottom center / cover no-repeat;
+}
+body:has(#desk) #lock, body:has(#desk) #signin { overflow: hidden; }
+body:has(#desk) .lk-time { font-family: "Big Shoulders Display", sans-serif !important; font-style: italic; font-weight: 900 !important; text-shadow: 0 5px 0 #e0368f, 0 0 40px rgba(224, 54, 143, .5) !important; }
+body:has(#desk) .lk-date { font-family: "Big Shoulders Display", sans-serif; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+body:has(#desk) .signin::before { background: rgba(23, 12, 44, .55) !important; }
+body:has(#desk) .pw { border-bottom-color: #f0479e !important; }
+body:has(#desk) .pw #sgo { background: #e0368f !important; }
+body:has(#desk) .sname { font-family: "Big Shoulders Display", sans-serif; font-style: italic; font-weight: 900; font-size: 40px !important; text-transform: uppercase; }
+
+/* jendela aplikasi */
+body:has(#desk) .win { background: #21123a !important; box-shadow: 10px 12px 0 rgba(224, 54, 143, .55), 0 24px 60px rgba(0, 0, 0, .55), 0 0 0 1px rgba(255, 255, 255, .12) !important; }
+body:has(#desk) .wtb { background: linear-gradient(90deg, #2b1250, #3d1a66) !important; color: #f1e9f7 !important; }
+body:has(#desk) .wtt { font-weight: 600; }
+body:has(#desk) .wtb button:hover { background: rgba(255, 255, 255, .12) !important; }
+body:has(#desk) .wtb button.wx:hover { background: #e0368f !important; }
+body:has(#desk) .wbody { background: var(--bg) !important; }
+body:has(#desk) .taskbar { background: rgba(23, 12, 44, .82) !important; border-top: 1px solid rgba(240, 71, 158, .45) !important; }
+body:has(#desk) .tbapps button.on::after { background: #ffd27a !important; }
+body:has(#desk) .startmenu { background: rgba(33, 18, 58, .95) !important; border-color: rgba(240, 71, 158, .4) !important; }
+body:has(#desk) .dic .lbl { text-shadow: 0 1px 3px #000, 0 0 8px rgba(23, 12, 44, .9); }
+
+/* aplikasi Firewall */
+body:has(#desk) .top { background: #120926 !important; }
+body:has(#desk) .tab[aria-selected=true] { border-bottom-color: #ffd27a !important; }
+body:has(#desk) .nav { background: #1a0d33 !important; }
+body:has(#desk) .nav button[aria-current=true] { box-shadow: inset 3px 0 #f0479e !important; background: rgba(240, 71, 158, .14) !important; }
+body:has(#desk) .vhead, body:has(#desk) .t th { background: #2b1a4a !important; }
+body:has(#desk) .btn.pri { background: #e0368f !important; border-color: #e0368f !important; }
+body:has(#desk) .kpi b, body:has(#desk) .count b { color: #ffd27a; }
+body:has(#desk) .meter, body:has(#desk) .hbar i, body:has(#desk) .days div { background: linear-gradient(90deg, #e0368f, #ff8a3d) !important; }
+body:has(#desk) .bar h2, body:has(#desk) .card h3, body:has(#desk) .dash h3 { font-family: "Big Shoulders Display", sans-serif; font-style: italic; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; }
+body:has(#desk) .bar h2 { font-size: 22px !important; text-shadow: none; }
+
+/* terminal & Notepad sengaja dibiarkan seperti aslinya */
+body:has(#desk) .term, body:has(#desk) .tw, body:has(#desk) .ed, body:has(#desk) .np, body:has(#desk) .np textarea { text-shadow: none; }
