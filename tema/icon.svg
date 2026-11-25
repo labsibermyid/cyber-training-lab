@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b0f33"/>
+      <stop offset=".45" stop-color="#3a1466"/>
+      <stop offset=".75" stop-color="#b52a83"/>
+      <stop offset="1" stop-color="#ff6f4a"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffeeb0"/>
+      <stop offset=".55" stop-color="#ffb04d"/>
+      <stop offset="1" stop-color="#ff4f7a"/>
+    </linearGradient>
+    <clipPath id="r"><rect width="64" height="64" rx="14"/></clipPath>
+    <mask id="cuts">
+      <rect width="64" height="64" fill="#fff"/>
+      <g fill="#000"><rect y="35" width="64" height="2"/><rect y="40" width="64" height="2.6"/><rect y="45.5" width="64" height="3.2"/></g>
+    </mask>
+  </defs>
+  <g clip-path="url(#r)">
+    <rect width="64" height="64" fill="url(#sky)"/>
+    <circle cx="38" cy="38" r="19" fill="url(#sun)" mask="url(#cuts)"/>
+    <rect y="50" width="64" height="14" fill="#140b29"/>
+    <rect y="50" width="64" height="1.6" fill="#e0368f"/>
+    <!-- palem -->
+    <g fill="#0d0620">
+      <path d="M15 64c1-12 1-24 5-35l2.2.6C19 40 18.6 52 18.2 64z"/>
+      <path d="M21 29c-5-4-12-5-18-3 6-.5 12 1 17 4.6zM21.4 28.6c-1-6-5-10.6-11-12.4 4.8 2.8 8.6 7 10 12.8zM21.8 28.4c3.4-5.4 9.4-8.4 15.4-8-5.8 1.2-11 4-14.4 8.6zM21.6 29.4c5.4-1.4 11.2-.4 15.6 3.2-5-2.2-10.6-2.8-15.4-2zM20.8 29.6c-3.4 3-5.4 7.6-5.2 12.8.8-4.8 3-9.2 6.2-12z"/>
+    </g>
+  </g>
+  <rect x=".75" y=".75" width="62.5" height="62.5" rx="13.3" fill="none" stroke="#ff5fb3" stroke-opacity=".55" stroke-width="1.5"/>
+</svg>
