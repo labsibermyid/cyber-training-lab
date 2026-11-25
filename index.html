@@ -225,10 +225,11 @@ body.on-title #tint{background:linear-gradient(180deg,transparent 40%,#1b0f33cc 
  <div class="bar"><i></i></div>
 </div>
 
-<script src="materi.js"></script>
+<script src="materi.js?v=20261125b"></script>
 <script>
 (()=>{
-const S=window.LAB_SECTIONS||[];
+const S=window.LAB_SECTIONS||window.LABSIBER_SECTIONS||[];
+if(!S.length){document.querySelector('.tagline').textContent='Daftar materi gagal dimuat. Muat ulang halaman ini.';return}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
