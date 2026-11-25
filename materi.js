@@ -19,8 +19,12 @@
     lab       alamat lab, atau null jika belum ada
     slides    alamat presentasi (presentasi/?d=<slug>), atau null
     pdf       daftar materi PDF:   { name: 'Judul', href: 'slug/materi/file.pdf', size: '2,1 MB' }
-    sample    daftar file sample:  { name: 'Judul', href: '...', size: '...', note: 'Password ZIP: infected' }
-              href boleh berupa link luar (GitHub Release, Google Drive) untuk file besar.
+    sample    biarkan []. Cukup upload file bernama  sample.zip  ke folder  <slug>/sample/
+              di GitHub; tombol Sample di halaman utama otomatis aktif dan langsung
+              mengunduh file itu (ukuran terbaca otomatis). Tidak perlu mengubah file ini.
+              Opsional: isi daftar manual { name, href, size, note } bila sample lebih dari satu
+              atau disimpan di luar (GitHub Release, Google Drive).
+    sampleNote  catatan yang muncul saat sample diunduh, mis. 'Password ZIP: infected'
 */
 window.LAB_SECTIONS = [
   {
