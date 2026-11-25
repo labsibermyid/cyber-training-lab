@@ -1,13 +1,14 @@
 /* Tema senja-neon untuk halaman lab.
-   Dipasang di akhir <body> setiap lab: <link rel="stylesheet" href="../tema/neon.css?v=1">
+   Dipasang di akhir <body> setiap lab: <link rel="stylesheet" href="../tema/neon.css?v=3">
+   lalu <script src="../tema/tema.js?v=1"></script> untuk pilihan tampilan Neon/Biasa.
    Hanya menimpa warna, huruf, dan latar; tata letak dan fungsi lab tidak diubah. */
 @import url("https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
 
 /* ---------- token warna (lembar kerja MA, DF, CTI) ---------- */
-:root,
-:root[data-theme="light"],
-:root[data-theme="dark"],
-:root:not([data-theme="light"]) {
+:root:not(:has(#desk)),
+:root[data-theme="light"]:not(:has(#desk)),
+:root[data-theme="dark"]:not(:has(#desk)),
+:root:not([data-theme="light"]):not(:has(#desk)) {
   color-scheme: dark;
   --bg: #170c2c;
   --paper: #21123a;
@@ -37,28 +38,29 @@
 }
 
 /* latar: malam dengan pendaran senja di bawah + scanline halus */
-html { background: #170c2c; }
-body {
+/* Threat Hunting (#desk): warna asli lab tetap dipakai; neon hanya untuk wallpaper, layar kunci, dan taskbar */
+html:not(:has(#desk)) { background: #170c2c; }
+body:not(:has(#desk)) {
   background:
     radial-gradient(90% 45% at 50% 115%, rgba(255, 138, 61, .20), transparent 60%),
     radial-gradient(70% 40% at 50% 108%, rgba(224, 54, 143, .26), transparent 65%),
     #170c2c fixed !important;
   color: var(--ink);
 }
-body::after {
+body:not(:has(#desk))::after {
   content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 2147482000;
   background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0, 0, 0, .10) 3px 4px);
 }
 @media print { body::after { display: none; } body { background: #fff !important; } }
 
 /* judul bergaya poster */
-h1, h2 { font-family: var(--f-head); font-style: italic; font-weight: 900; letter-spacing: .005em; }
-h1 { text-shadow: 0 3px 0 #e0368f, 0 0 28px rgba(224, 54, 143, .35); }
-::selection { background: #f0479e; color: #fff; }
+body:not(:has(#desk)) :is(h1, h2) { font-family: var(--f-head); font-style: italic; font-weight: 900; letter-spacing: .005em; }
+body:not(:has(#desk)) h1 { text-shadow: 0 3px 0 #e0368f, 0 0 28px rgba(224, 54, 143, .35); }
+body:not(:has(#desk)) ::selection { background: #f0479e; color: #fff; }
 
 /* tombol & tautan utama */
-a { color: inherit; }
-input, textarea, select { color: var(--ink); }
+body:not(:has(#desk)) a { color: inherit; }
+body:not(:has(#desk)) :is(input, textarea, select) { color: var(--ink); }
 
 /* ---------- lab CTI ---------- */
 body:has(#actors) .a-head { background: linear-gradient(100deg, #3a1466, #7a1f6e 55%, #b8335f) !important; }
@@ -88,29 +90,8 @@ body:has(#desk) .pw { border-bottom-color: #f0479e !important; }
 body:has(#desk) .pw #sgo { background: #e0368f !important; }
 body:has(#desk) .sname { font-family: "Big Shoulders Display", sans-serif; font-style: italic; font-weight: 900; font-size: 40px !important; text-transform: uppercase; }
 
-/* jendela aplikasi */
-body:has(#desk) .win { background: #21123a !important; box-shadow: 10px 12px 0 rgba(224, 54, 143, .55), 0 24px 60px rgba(0, 0, 0, .55), 0 0 0 1px rgba(255, 255, 255, .12) !important; }
-body:has(#desk) .wtb { background: linear-gradient(90deg, #2b1250, #3d1a66) !important; color: #f1e9f7 !important; }
-body:has(#desk) .wtt { font-weight: 600; }
-body:has(#desk) .wtb button:hover { background: rgba(255, 255, 255, .12) !important; }
-body:has(#desk) .wtb button.wx:hover { background: #e0368f !important; }
-body:has(#desk) .wbody { background: var(--bg) !important; }
+/* jendela aplikasi (Firewall, SSH, README) sengaja memakai warna asli lab */
 body:has(#desk) .taskbar { background: rgba(23, 12, 44, .82) !important; border-top: 1px solid rgba(240, 71, 158, .45) !important; }
 body:has(#desk) .tbapps button.on::after { background: #ffd27a !important; }
 body:has(#desk) .startmenu { background: rgba(33, 18, 58, .95) !important; border-color: rgba(240, 71, 158, .4) !important; }
 body:has(#desk) .dic .lbl { text-shadow: 0 1px 3px #000, 0 0 8px rgba(23, 12, 44, .9); }
-
-/* aplikasi Firewall */
-body:has(#desk) .top { background: #120926 !important; }
-body:has(#desk) .tab[aria-selected=true] { border-bottom-color: #ffd27a !important; }
-body:has(#desk) .nav { background: #1a0d33 !important; }
-body:has(#desk) .nav button[aria-current=true] { box-shadow: inset 3px 0 #f0479e !important; background: rgba(240, 71, 158, .14) !important; }
-body:has(#desk) .vhead, body:has(#desk) .t th { background: #2b1a4a !important; }
-body:has(#desk) .btn.pri { background: #e0368f !important; border-color: #e0368f !important; }
-body:has(#desk) .kpi b, body:has(#desk) .count b { color: #ffd27a; }
-body:has(#desk) .meter, body:has(#desk) .hbar i, body:has(#desk) .days div { background: linear-gradient(90deg, #e0368f, #ff8a3d) !important; }
-body:has(#desk) .bar h2, body:has(#desk) .card h3, body:has(#desk) .dash h3 { font-family: "Big Shoulders Display", sans-serif; font-style: italic; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; }
-body:has(#desk) .bar h2 { font-size: 22px !important; text-shadow: none; }
-
-/* terminal & Notepad sengaja dibiarkan seperti aslinya */
-body:has(#desk) .term, body:has(#desk) .tw, body:has(#desk) .ed, body:has(#desk) .np, body:has(#desk) .np textarea { text-shadow: none; }
