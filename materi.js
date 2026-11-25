@@ -49,7 +49,7 @@ window.LAB_SECTIONS = [
     slides: 'presentasi/?d=cti-apt-profiling',
     slidesCount: 121,
     pdf: [
-      { name: 'Cyber Threat Intelligence (versi presentasi)', href: 'cti-apt-profiling/materi/Cyber-Threat-Intelligence.pdf', size: '1,2 MB · 121 halaman' }
+      { name: 'Cyber Threat Intelligence (versi presentasi)', href: 'cti-apt-profiling/materi/Cyber-Threat-Intelligence.pdf', size: '1,5 MB · 121 halaman' }
     ],
     sample: [],
     tools: [
@@ -69,7 +69,7 @@ window.LAB_SECTIONS = [
     slides: 'presentasi/?d=threat-hunting-lab',
     slidesCount: 49,
     pdf: [
-      { name: 'Cyber Threat Hunting', href: 'threat-hunting-lab/materi/Threat-Hunting.pdf', size: '0,4 MB · 49 halaman' }
+      { name: 'Cyber Threat Hunting', href: 'threat-hunting-lab/materi/Threat-Hunting.pdf', size: '5,6 MB · 102 halaman' }
     ],
     sample: [],
     tools: [
@@ -109,7 +109,7 @@ window.LAB_SECTIONS = [
     slides: 'presentasi/?d=digital-forensic',
     slidesCount: 401,
     pdf: [
-      { name: 'Digital Forensics', href: 'digital-forensic/materi/Digital-Forensics.pdf', size: '1,7 MB · 401 halaman' }
+      { name: 'Digital Forensics', href: 'digital-forensic/materi/Digital-Forensics.pdf', size: '0,9 MB · 83 halaman' }
     ],
     sample: [],
     tools: [
