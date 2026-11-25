@@ -225,7 +225,7 @@ body.on-title #tint{background:linear-gradient(180deg,transparent 40%,#1b0f33cc 
  <div class="bar"><i></i></div>
 </div>
 
-<script src="materi.js?v=20261125d"></script>
+<script src="materi.js?v=20261125e"></script>
 <script>
 (()=>{
 const S=window.LAB_SECTIONS||window.LABSIBER_SECTIONS||[];
@@ -258,6 +258,7 @@ function itemsFor(){
   const ready=!!s.lab;
   return [
    {label:'Buka lab',disabled:!ready,act:()=>launch(s)},
+   {label:'Presentasi',tag:s.slidesCount?String(s.slidesCount):'',disabled:!s.slides,act:()=>launch(s,s.slides,'Presentasi')},
    {label:'Materi PDF',tag:s.pdf.length?String(s.pdf.length):'',disabled:!s.pdf.length,act:()=>{fileKind='pdf';go('files',0)}},
    {label:'Sample',tag:s.sample.length?String(s.sample.length):'',disabled:!s.sample.length,act:()=>{fileKind='sample';go('files',0)}},
    {label:'Kembali',act:back}];
@@ -276,14 +277,14 @@ function render(anim){
 }
 function paintCard(swap){
  const s=S[level==='main'?idx:sec];
- const has=[!!s.lab,s.pdf.length>0,s.sample.length>0];
+ const has=[!!s.lab,!!s.slides,s.pdf.length>0,s.sample.length>0];
  let body;
  if(level==='files'){
   const arr=s[fileKind],f=arr[idx];
   body=f?`<p>${esc(f.name)}${f.size?' · '+esc(f.size):''}</p>${f.note?`<p style="margin-top:8px"><b>${esc(f.note)}</b></p>`:''}${fileKind==='sample'?'<p style="margin-top:10px;font-size:14px">Buka sample hanya di mesin virtual latihan.</p>':''}`:'<p>Kembali ke menu section.</p>';
  }else{
   body=`<p>${esc(s.status==='ready'?s.summary:'Section ini sedang disiapkan.')}</p>
-  <div class="chips"><span class="chip ${has[0]?'on':''}"><i></i>Lab</span><span class="chip ${has[1]?'on':''}"><i></i>Materi PDF${has[1]?' ('+s.pdf.length+')':''}</span><span class="chip ${has[2]?'on':''}"><i></i>Sample${has[2]?' ('+s.sample.length+')':''}</span></div>`;
+  <div class="chips"><span class="chip ${has[0]?'on':''}"><i></i>Lab</span><span class="chip ${has[1]?'on':''}"><i></i>Presentasi${has[1]?' ('+s.slidesCount+')':''}</span><span class="chip ${has[2]?'on':''}"><i></i>Materi PDF${has[2]?' ('+s.pdf.length+')':''}</span><span class="chip ${has[3]?'on':''}"><i></i>Sample${has[3]?' ('+s.sample.length+')':''}</span></div>`;
  }
  card.innerHTML=`<span class="slash"></span><svg class="glyph" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GLYPH[s.slug]||''}</svg>
   <div class="k">Section ${S.indexOf(s)+1}${s.status==='ready'?'':' · Segera'}</div><h2>${esc(s.short)}</h2>${body}`;
@@ -298,17 +299,18 @@ function move(to,focus=true){
  paintCard(level!=='sec');
 }
 function go(lv,i){level=lv;idx=i;render(true);focusCur();if(lv!=='files')syncHash()}
-function back(){if(level==='files'){go('sec',fileKind==='pdf'?1:2)}else if(level==='sec'){level='main';idx=sec;render(true);focusCur();syncHash(true)}else{showTitle()}}
+function back(){if(level==='files'){go('sec',fileKind==='pdf'?2:3)}else if(level==='sec'){level='main';idx=sec;render(true);focusCur();syncHash(true)}else{showTitle()}}
 function activate(i){const it=itemsFor()[i];if(!it||it.disabled)return;it.act()}
 function focusCur(){list.querySelectorAll('.item')[idx]?.focus()}
 function syncHash(main){const h=main?'':'#'+S[sec].slug;if(location.hash!==h)history.replaceState(null,'',location.pathname+h)}
 function openFile(f){if(/^https?:/.test(f.href)||/\.pdf$/i.test(f.href))window.open(f.href,'_blank','noopener');else{const a=document.createElement('a');a.href=f.href;a.download='';document.body.appendChild(a);a.click();a.remove()}}
-function launch(s){
- if(reduce){location.href=s.lab;return}
+function launch(s,url,kind){
+ url=url||s.lab;
+ if(reduce){location.href=url;return}
  const L=$('loading'),t=TIPS[Math.floor(Math.random()*TIPS.length)];
- $('ldBig').textContent=s.short;$('ldTip').innerHTML=`<b>${t[0]}</b>${esc(t[1])}`;
+ $('ldBig').textContent=kind?kind:s.short;$('ldTip').innerHTML=`<b>${t[0]}</b>${esc(t[1])}`;
  L.hidden=false;L.classList.remove('go');void L.offsetWidth;L.classList.add('go');
- setTimeout(()=>{location.href=s.lab},1000);
+ setTimeout(()=>{location.href=url},1000);
 }
 window.addEventListener('pageshow',e=>{if(e.persisted){$('loading').hidden=true}});
 

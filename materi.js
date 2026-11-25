@@ -17,6 +17,7 @@
     detail    penjelasan singkat di panel
     facts     angka-angka kecil [nilai, keterangan]
     lab       alamat lab, atau null jika belum ada
+    slides    alamat presentasi (presentasi/?d=<slug>), atau null
     pdf       daftar materi PDF:   { name: 'Judul', href: 'slug/materi/file.pdf', size: '2,1 MB' }
     sample    daftar file sample:  { name: 'Judul', href: '...', size: '...', note: 'Password ZIP: infected' }
               href boleh berupa link luar (GitHub Release, Google Drive) untuk file besar.
@@ -31,6 +32,8 @@ window.LAB_SECTIONS = [
     detail: 'Sepuluh profil grup APT dari laporan open source. Untuk setiap grup, peserta memutuskan Related, Partial, atau Unrelated bagi organisasi peserta dan menuliskan alasannya. Ringkasan prioritas terisi otomatis dan bisa diunduh.',
     facts: [['10', 'grup APT'], ['17', 'sumber laporan']],
     lab: 'cti-apt-profiling/',
+    slides: 'presentasi/?d=cti-apt-profiling',
+    slidesCount: 121,
     pdf: [],
     sample: []
   },
@@ -43,6 +46,8 @@ window.LAB_SECTIONS = [
     detail: 'Satu kasus di jaringan fiktif Nusantara: log firewall 30 hari, salinan bukti lima host untuk dipindai dengan Loki-RS, dan event log Windows untuk Hayabusa. Peserta menyusun IOC dari laporan APT, memperbaiki aturan Sigma, lalu menulis laporan singkat.',
     facts: [['3', 'alat: Firewall, Loki-RS, Hayabusa'], ['4', 'bagian tugas']],
     lab: 'threat-hunting-lab/',
+    slides: 'presentasi/?d=threat-hunting-lab',
+    slidesCount: 49,
     pdf: [
       { name: 'Cyber Threat Hunting', href: 'threat-hunting-lab/materi/Threat-Hunting.pdf', size: '0,4 MB · 49 halaman' }
     ],
@@ -57,6 +62,8 @@ window.LAB_SECTIONS = [
     detail: 'Latihan dari Section 3 sampai Section 8: triage dan analisis statis, analisis kode dan skrip, analisis dinamis, analisis jaringan, dan latihan akhir. Setiap pertanyaan punya jawaban pasti yang diperiksa otomatis.',
     facts: [['36', 'latihan'], ['292', 'soal']],
     lab: 'malware-analysis/',
+    slides: 'presentasi/?d=malware-analysis',
+    slidesCount: 95,
     pdf: [
       { name: 'Malware Analysis: Teori', href: 'malware-analysis/materi/Malware-Analysis-Teori.pdf', size: '1,5 MB · 95 halaman' }
     ],
@@ -71,6 +78,8 @@ window.LAB_SECTIONS = [
     detail: 'Sebelas barang bukti dari satu perkara fiktif, mulai dari flashdisk pelaku phishing, laptop korban BEC, sampai ujian akhir di file server. Setiap barang bukti punya skenario, pertanyaan penyidik, dan tingkat kesulitan.',
     facts: [['11', 'barang bukti'], ['Autopsy', 'alat utama']],
     lab: 'digital-forensic/',
+    slides: 'presentasi/?d=digital-forensic',
+    slidesCount: 402,
     pdf: [
       { name: 'Digital Forensics', href: 'digital-forensic/materi/Digital-Forensics.pdf', size: '1,7 MB · 402 halaman' }
     ],
@@ -85,6 +94,7 @@ window.LAB_SECTIONS = [
     detail: 'Section ini sedang disiapkan. Lab, materi PDF, dan sample akan muncul di sini begitu tersedia.',
     facts: [],
     lab: null,
+    slides: null,
     pdf: [],
     sample: []
   },
@@ -97,6 +107,7 @@ window.LAB_SECTIONS = [
     detail: 'Section ini sedang disiapkan. Lab, materi PDF, dan sample akan muncul di sini begitu tersedia.',
     facts: [],
     lab: null,
+    slides: null,
     pdf: [],
     sample: []
   }
