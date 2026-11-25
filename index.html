@@ -225,7 +225,7 @@ body.on-title #tint{background:linear-gradient(180deg,transparent 40%,#1b0f33cc 
  <div class="bar"><i></i></div>
 </div>
 
-<script src="materi.js?v=20261125u"></script>
+<script src="materi.js?v=20261125v"></script>
 <script>
 (()=>{
 const S=window.LAB_SECTIONS||window.LABSIBER_SECTIONS||[];
@@ -240,7 +240,7 @@ S.forEach(s=>{s.tools=s.tools||[];s.sample=s.sample||[];if(s.sample.length)retur
  const href=s.slug+'/sample/sample.zip';
  fetch(href+'?t='+Date.now(),{method:'HEAD',cache:'no-store'}).then(r=>{if(!r.ok)return;
   AUTO[s.slug]={name:'Sample '+s.short,href,size:fmtSize(+r.headers.get('content-length')),note:s.sampleNote||'',dl:'Sample-'+s.short.replace(/\s+/g,'-')+'.zip',auto:true};
-  if(typeof render==='function'&&document.getElementById('menu')&&!document.getElementById('menu').hidden)render(false);}).catch(()=>{});
+  if(typeof render==='function'&&document.getElementById('menu')&&!document.getElementById('menu').hidden){if(level==='sec'){const k=lastKeys[idx],ks=itemsFor().map(it=>it.key);idx=Math.max(0,ks.indexOf(k))}if(level!=='files'||fileKind!=='sample'){render(false);if(level==='sec')focusCur()}}}).catch(()=>{});
 });
 if(!S.length){document.querySelector('.tagline').textContent='Daftar materi gagal dimuat. Muat ulang halaman ini.';return}
 const $=id=>document.getElementById(id);
@@ -261,7 +261,7 @@ const TIPS=[
  ['Tips','Buka file sample hanya di mesin virtual latihan, bukan di laptop kerja.'],
  ['Tips','Tombol Beranda di pojok setiap lab membawa Anda kembali ke menu ini.']];
 
-let level='main',sec=0,idx=0,fileKind=null;
+let level='main',sec=0,idx=0,fileKind=null,lastKeys=[];
 const card=$('card'),list=$('list'),crumb=$('crumb');
 
 function itemsFor(){
@@ -270,18 +270,18 @@ function itemsFor(){
  if(level==='sec'){
   const ready=!!s.lab;
   return [
-   {label:'Buka lab',disabled:!ready,act:()=>launch(s)},
-   {label:'Presentasi',tag:s.slidesCount?String(s.slidesCount):'',disabled:!s.slides,act:()=>launch(s,s.slides,'Presentasi')},
-   {label:'Materi PDF',tag:s.pdf.length?String(s.pdf.length):'',disabled:!s.pdf.length,act:()=>{fileKind='pdf';go('files',0)}},
-   {label:'Sample',tag:sampleList(s).length?(AUTO[s.slug]&&!s.sample.length?(AUTO[s.slug].size||'ZIP'):String(sampleList(s).length)):'',disabled:!sampleList(s).length,act:()=>{const L=sampleList(s);if(L.length===1&&L[0].auto){openFile(L[0])}else{fileKind='sample';go('files',0)}}},
-   {label:'Tools',tag:toolList(s).length?String(toolList(s).length):'',disabled:!toolList(s).length,act:()=>{const L=toolList(s);if(L.length===1){openFile(L[0],'tool')}else{fileKind='tools';go('files',0)}}},
-   {label:'Kembali',act:back}];
+   {key:'lab',label:'Buka lab',disabled:!ready,act:()=>launch(s)},
+   {key:'slides',label:'Presentasi',tag:s.slidesCount?String(s.slidesCount):'',disabled:!s.slides,act:()=>launch(s,s.slides,'Presentasi')},
+   {key:'pdf',label:'Materi PDF',tag:s.pdf.length?String(s.pdf.length):'',disabled:!s.pdf.length,act:()=>{fileKind='pdf';go('files',0)}},
+   {key:'sample',label:'Sample',tag:sampleList(s).length?(AUTO[s.slug]&&!s.sample.length?(AUTO[s.slug].size||'ZIP'):String(sampleList(s).length)):'',disabled:!sampleList(s).length,act:()=>{const L=sampleList(s);if(L.length===1&&L[0].auto){openFile(L[0])}else{fileKind='sample';go('files',0)}}},
+   {key:'tools',label:'Tools',tag:toolList(s).length?String(toolList(s).length):'',disabled:!toolList(s).length,act:()=>{const L=toolList(s);if(L.length===1){openFile(L[0],'tool')}else{fileKind='tools';go('files',0)}}},
+   {key:'back',label:'Kembali',act:back}].filter(it=>!it.disabled);
  }
  const arr=fileKind==='sample'?sampleList(s):fileKind==='tools'?toolList(s):s[fileKind];
  return arr.map(f=>({label:f.name,small:true,tag:f.size||'',act:()=>openFile(f,fileKind==='tools'?'tool':'')})).concat([{label:'Kembali',small:true,act:back}]);
 }
 function render(anim){
- const s=S[sec],its=itemsFor();
+ const s=S[sec],its=itemsFor();lastKeys=its.map(it=>it.key);
  document.documentElement.style.setProperty('--tint',TINT[s.slug]||'#e0368f');
  crumb.innerHTML=level==='main'?'Pilih section <small>'+S.length+' section, kerjakan berurutan</small>':
   level==='sec'?esc(s.title)+' <small>Section '+(sec+1)+'</small>':esc(s.title)+' <small>'+({pdf:'Materi PDF',sample:'Sample',tools:'Tools'}[fileKind])+'</small>';
@@ -298,7 +298,7 @@ function paintCard(swap){
   body=f?`<p>${esc(f.name)}${f.size?' · '+esc(f.size):''}</p>${f.note?`<p style="margin-top:8px"><b>${esc(f.note)}</b></p>`:''}${fileKind==='sample'?'<p style="margin-top:10px;font-size:14px">Buka sample hanya di mesin virtual latihan.</p>':''}${fileKind==='tools'?'<p style="margin-top:10px;font-size:14px">Tekan Enter atau ketuk untuk mengunduh. Pasang di mesin virtual latihan.</p>':''}`:'<p>Kembali ke menu section.</p>';
  }else{
   body=`<p>${esc(s.status==='ready'?s.summary:'Section ini sedang disiapkan.')}</p>
-  <div class="chips"><span class="chip ${has[0]?'on':''}"><i></i>Lab</span><span class="chip ${has[1]?'on':''}"><i></i>Presentasi${has[1]?' ('+s.slidesCount+')':''}</span><span class="chip ${has[2]?'on':''}"><i></i>Materi PDF${has[2]?' ('+s.pdf.length+')':''}</span><span class="chip ${has[3]?'on':''}"><i></i>Sample${has[3]?' ('+sampleList(s).length+')':''}</span><span class="chip ${has[4]?'on':''}"><i></i>Tools${has[4]?' ('+toolList(s).length+')':''}</span></div>`;
+  ${has.some(Boolean)?`<div class="chips">${[['Lab',''],['Presentasi',' ('+s.slidesCount+')'],['Materi PDF',' ('+s.pdf.length+')'],['Sample',' ('+sampleList(s).length+')'],['Tools',' ('+toolList(s).length+')']].map((c,i)=>has[i]?`<span class="chip on"><i></i>${c[0]}${c[1]}</span>`:'').join('')}</div>`:''}`;
  }
  card.innerHTML=`<span class="slash"></span><svg class="glyph" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GLYPH[s.slug]||''}</svg>
   <div class="k">Section ${S.indexOf(s)+1}${s.status==='ready'?'':' · Segera'}</div><h2>${esc(s.short)}</h2>${body}`;
@@ -313,7 +313,7 @@ function move(to,focus=true){
  paintCard(level!=='sec');
 }
 function go(lv,i){level=lv;idx=i;render(true);focusCur();if(lv!=='files')syncHash()}
-function back(){if(level==='files'){go('sec',{pdf:2,sample:3,tools:4}[fileKind])}else if(level==='sec'){level='main';idx=sec;render(true);focusCur();syncHash(true)}else{showTitle()}}
+function back(){if(level==='files'){level='sec';go('sec',Math.max(0,itemsFor().findIndex(it=>it.key===fileKind)))}else if(level==='sec'){level='main';idx=sec;render(true);focusCur();syncHash(true)}else{showTitle()}}
 function activate(i){const it=itemsFor()[i];if(!it||it.disabled)return;it.act()}
 function focusCur(){list.querySelectorAll('.item')[idx]?.focus()}
 function syncHash(main){const h=main?'':'#'+S[sec].slug;if(location.hash!==h)history.replaceState(null,'',location.pathname+h)}
