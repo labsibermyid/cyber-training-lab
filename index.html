@@ -1,10 +1,332 @@
 <!DOCTYPE html>
-<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Cyber Training Lab</title>
-<style>body{font:16px/1.5 system-ui,sans-serif;margin:0;background:#eef0f2;color:#1b2026}main{max-width:720px;margin:0 auto;padding:48px 20px}h1{font-size:28px;margin:0 0 8px}p{color:#5d6873;margin:0 0 28px}a{display:block;background:#fff;border:1px solid #d9dee3;border-left:4px solid #0f7b74;border-radius:8px;padding:16px 18px;margin-bottom:12px;color:inherit;text-decoration:none}a:hover{border-color:#0f7b74}a b{display:block;font-size:18px}a span{color:#5d6873;font-size:14px}</style></head>
-<body><main><h1>Cyber Training Lab</h1><p>Pilih materi latihan.</p>
-<a href="threat-hunting-lab/"><b>Threat Hunting Lab</b><span>Firewall log, Loki-RS, Hayabusa</span></a>
-<a href="digital-forensic/"><b>Lembar Kerja KABUT GELAP</b><span>Lembar kerja latihan</span></a>
-<a href="cti-apt-profiling/"><b>Lab CTI · Profiling APT</b><span>Tentukan Related / Partial / Unrelated untuk 10 grup APT</span></a>
-<a href="malware-analysis/"><b>Lembar Latihan Malware Analysis</b><span>Lembar latihan analisis malware</span></a>
-</main></body></html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>labsiber.pro · Lab latihan keamanan siber</title>
+<meta name="description" content="Lab latihan keamanan siber: CTI, Threat Hunting, Malware Analysis, Digital Forensic, Phishing, dan Incident Response.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+ --night:#1b0f33;      /* langit malam, teks gelap */
+ --dusk:#3a1466;       /* ungu senja */
+ --neon:#e0368f;       /* magenta neon */
+ --sunset:#ff8a3d;     /* oranye matahari */
+ --gold:#ffd27a;       /* cahaya emas */
+ --lagoon:#14b3ad;     /* laut teal */
+ --sand:#fbf3ea;       /* pasir, latar konten */
+ --ink:#22163a;--muted:#6c5f80;--line:#e9dccf;--card:#fff;
+ --f-disp:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+ --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root{--sand:#170d2b;--ink:#f1e9f7;--muted:#b3a5c7;--line:#33244f;--card:#211539}}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--sand);color:var(--ink);font:16px/1.6 var(--f-body)}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+[hidden]{display:none!important}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:min(86vh,740px);overflow:hidden;color:#fff;isolation:isolate;display:flex;flex-direction:column}
+.scene{position:absolute;inset:0;z-index:-1}
+.scene svg{position:absolute;left:50%;bottom:0;width:max(100%,1400px);height:100%;transform:translateX(-50%)}
+.layer{transition:transform .25s ease-out;will-change:transform}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px clamp(18px,4vw,56px)}
+.mark{font:italic 900 30px/1 var(--f-disp);letter-spacing:.01em;text-decoration:none;color:#fff;text-shadow:0 2px 0 var(--neon)}
+.mark small{font-size:.55em;font-weight:800;color:var(--gold);text-shadow:none;margin-left:2px}
+.topbar nav{display:flex;gap:6px;flex-wrap:wrap}
+.topbar nav a{font-size:14px;font-weight:500;text-decoration:none;padding:7px 12px;border-radius:999px;background:#ffffff1f;backdrop-filter:blur(6px)}
+.topbar nav a:hover{background:#ffffff38}
+.hero-copy{padding:clamp(24px,7vh,80px) clamp(18px,4vw,56px) 150px;max-width:760px}
+.hero h1{font:italic 900 clamp(46px,6.2vw,92px)/.9 var(--f-disp);margin:0;letter-spacing:-.005em;text-transform:none;
+ text-shadow:0 3px 0 var(--neon),0 0 30px #e0368f66}
+.hero p{font-size:clamp(17px,1.6vw,20px);max-width:52ch;margin:22px 0 28px;text-shadow:0 1px 12px #1b0f3399}
+.cta{display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:var(--night);font-weight:600;text-decoration:none;padding:13px 22px;border-radius:999px;box-shadow:0 6px 0 #b8662a}
+.cta:hover{transform:translateY(-1px)}
+.cta:active{transform:translateY(3px);box-shadow:0 3px 0 #b8662a}
+.cta svg{width:18px;height:18px}
+
+/* ---------- route ---------- */
+.route{position:relative;margin-top:-80px;padding:0 clamp(14px,4vw,56px)}
+.route-inner{max-width:1240px;margin:0 auto;background:var(--card);border-radius:22px;box-shadow:0 20px 60px #1b0f3326;padding:26px clamp(16px,3vw,34px) 30px;border:1px solid var(--line)}
+.route h2{font:italic 800 clamp(30px,3.4vw,42px)/1 var(--f-disp);margin:0 0 4px}
+.route .lead{margin:0 0 22px;color:var(--muted);max-width:66ch}
+.track{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;padding-top:30px}
+.road{position:absolute;left:calc(100%/12);right:calc(100%/12);top:47px;height:6px;border-radius:3px;background:repeating-linear-gradient(90deg,var(--line) 0 14px,transparent 14px 24px)}
+.road i{position:absolute;inset:0 auto 0 0;border-radius:3px;background:linear-gradient(90deg,var(--neon),var(--sunset));width:var(--done,0%)}
+.road b{position:absolute;top:50%;left:0;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 5px #ffd27a55,0 0 18px var(--sunset);opacity:0}
+.stop{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;background:none;border:0;padding:0 4px 12px;border-radius:14px}
+.stop .dot{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:italic 900 20px/1 var(--f-disp);background:var(--card);border:3px solid var(--line);color:var(--muted);position:relative;z-index:1;transition:transform .2s,background .2s,border-color .2s,color .2s}
+.stop.ready .dot{border-color:var(--neon);color:var(--neon)}
+.stop.lit.ready .dot{background:var(--neon);color:#fff}
+.stop.soon .dot{border-style:dashed}
+.stop .nm{font:800 19px/1.05 var(--f-disp);letter-spacing:.01em}
+.stop .st{font-size:12.5px;color:var(--muted)}
+.stop .res{display:flex;gap:4px}
+.stop .res span{width:22px;height:5px;border-radius:3px;background:var(--line)}
+.stop .res span.on{background:var(--lagoon)}
+.stop:hover .dot{transform:translateY(-3px)}
+.stop[aria-selected=true]{background:linear-gradient(180deg,#e0368f14,transparent)}
+.stop[aria-selected=true] .dot{transform:scale(1.14);box-shadow:0 0 0 6px #ffd27a66}
+.stop[aria-selected=true] .nm{color:var(--neon)}
+.reskey{margin:8px 0 0;text-align:center;font-size:12.5px;color:var(--muted);justify-content:center}
+
+/* ---------- panel ---------- */
+.panel{max-width:1240px;margin:26px auto 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:clamp(18px,3vw,40px);padding:0 2px}
+.panel.swap{animation:swap .28s ease-out}
+@keyframes swap{from{opacity:0;transform:translateY(8px)}}
+.p-no{font:italic 900 88px/.8 var(--f-disp);color:transparent;-webkit-text-stroke:2px var(--neon)}
+.p-title{font:italic 900 clamp(38px,4.6vw,58px)/.92 var(--f-disp);margin:8px 0 10px}
+.badge{display:inline-block;font-size:13px;font-weight:600;padding:3px 12px;border-radius:999px;background:#14b3ad22;color:#0d7f7b}
+.badge.soon{background:#ff8a3d22;color:#b4561a}
+@media (prefers-color-scheme:dark){.badge{color:var(--lagoon)}.badge.soon{color:var(--sunset)}}
+.p-detail{margin:14px 0 16px;max-width:56ch}
+.facts{display:flex;flex-wrap:wrap;gap:10px 26px;margin:0;padding:0;list-style:none}
+.facts b{display:block;font:italic 900 34px/1 var(--f-disp);color:var(--neon)}
+.facts span{font-size:13.5px;color:var(--muted)}
+.steps{display:flex;gap:10px;margin-top:22px}
+.ghost{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:8px 14px;font-size:14px}
+.ghost:hover:not(:disabled){border-color:var(--neon);color:var(--neon)}
+.ghost:disabled{opacity:.4;cursor:default}
+
+.res-grid{display:grid;gap:14px}
+.res-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:grid;grid-template-columns:48px minmax(0,1fr);gap:4px 14px;align-items:start}
+.res-card .ic{grid-row:span 3;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;color:#fff}
+.res-card .ic svg{width:24px;height:24px}
+.ic.lab{background:linear-gradient(135deg,var(--neon),var(--sunset))}
+.ic.pdf{background:linear-gradient(135deg,var(--dusk),var(--neon))}
+.ic.smp{background:linear-gradient(135deg,var(--lagoon),#1b6fa8)}
+.res-card h3{margin:0;font:800 22px/1.1 var(--f-disp);letter-spacing:.01em}
+.res-card p{margin:0;font-size:14px;color:var(--muted)}
+.res-card .go{justify-self:start;margin-top:8px;display:inline-flex;align-items:center;gap:8px;background:var(--night);color:#fff;text-decoration:none;font-weight:600;font-size:14.5px;padding:9px 16px;border-radius:999px}
+@media (prefers-color-scheme:dark){.res-card .go{background:var(--gold);color:var(--night)}}
+.res-card .go:hover{background:var(--neon);color:#fff}
+.files{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.files a{display:flex;justify-content:space-between;gap:12px;align-items:baseline;text-decoration:none;padding:8px 12px;border-radius:10px;background:var(--sand);font-size:14.5px;font-weight:500}
+.files a:hover{background:#e0368f1a;color:var(--neon)}
+.files small{color:var(--muted);font-weight:400;white-space:nowrap}
+.files .note{display:block;font-size:12.5px;color:var(--muted);font-weight:400;padding:2px 12px 0}
+
+/* ---------- notes ---------- */
+.notes{max-width:1240px;margin:64px auto 0;padding:0 clamp(14px,4vw,56px)}
+.notes h2{font:italic 800 clamp(28px,3vw,38px)/1 var(--f-disp);margin:0 0 16px}
+.notes ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px 30px}
+.notes li{padding-left:18px;border-left:3px solid var(--sunset);font-size:15px}
+.notes li b{display:block}
+footer{margin-top:70px;padding:28px clamp(18px,4vw,56px) 34px;background:var(--night);color:#d9cbe8;font-size:14px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
+footer .mark{font-size:22px}
+
+/* ---------- load sequence (one moment) ---------- */
+@media (prefers-reduced-motion:no-preference){
+ .sun{animation:rise 1.6s cubic-bezier(.2,.7,.2,1) both}
+ @keyframes rise{from{transform:translateY(120px)}}
+ .hero-copy>*{animation:up .7s .35s ease-out both}
+ .hero-copy>p{animation-delay:.5s}.hero-copy>.cta{animation-delay:.65s}
+ @keyframes up{from{opacity:0;transform:translateY(16px)}}
+ .road.go b{animation:drive 2.2s .2s cubic-bezier(.45,.05,.4,1) forwards}
+ @keyframes drive{0%{left:0;opacity:1}92%{opacity:1}100%{left:var(--done,0%);opacity:0}}
+ .road.go i{animation:fill 2.2s .2s cubic-bezier(.45,.05,.4,1) both}
+ @keyframes fill{from{width:0}}
+ .sway{transform-origin:50% 100%;animation:sway 7s ease-in-out infinite alternate}
+ @keyframes sway{to{transform:rotate(1.6deg)}}
+}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+ .track{grid-template-columns:minmax(0,1fr);gap:4px;padding-top:0}
+ .road{left:31px;right:auto;top:20px;bottom:20px;width:6px;height:auto;background:repeating-linear-gradient(180deg,var(--line) 0 14px,transparent 14px 24px)}
+ .road i{inset:0 0 auto 0;width:auto;height:var(--done,0%)}
+ .road b{display:none}
+ @media (prefers-reduced-motion:no-preference){.road.go i{animation:fillv 2s .2s ease-out both}@keyframes fillv{from{height:0}}}
+ .stop{flex-direction:row;text-align:left;gap:14px;padding:8px 10px}
+ .stop .txt{display:flex;flex-direction:column}
+ .stop .res{margin-left:auto}
+ .panel{grid-template-columns:minmax(0,1fr)}
+ .p-no{font-size:64px}
+ .route{margin-top:-60px}
+ .hero-copy{padding-bottom:110px}
+}
+@media (min-width:901px){.stop .txt{display:contents}}
+@media (max-width:560px){.topbar nav{display:none}}
+</style>
+</head>
+<body>
+
+<header class="hero" id="top">
+ <div class="scene" aria-hidden="true">
+  <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice">
+   <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+     <stop offset="0" stop-color="#1b0f33"/><stop offset=".32" stop-color="#3a1466"/><stop offset=".58" stop-color="#b52a83"/><stop offset=".76" stop-color="#ff6f4a"/><stop offset=".86" stop-color="#ffb35c"/>
+    </linearGradient>
+    <linearGradient id="sunG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".55" stop-color="#ffb04d"/><stop offset="1" stop-color="#ff4f7a"/></linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7a5a"/><stop offset=".12" stop-color="#7a2f8c"/><stop offset=".5" stop-color="#2a1a5c"/><stop offset="1" stop-color="#140b29"/></linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14b3ad" stop-opacity=".0"/><stop offset="1" stop-color="#14b3ad" stop-opacity=".35"/></linearGradient>
+    <mask id="cuts"><rect width="1600" height="900" fill="#fff"/><g fill="#000"><rect x="0" y="560" width="1600" height="7"/><rect x="0" y="584" width="1600" height="9"/><rect x="0" y="610" width="1600" height="11"/><rect x="0" y="638" width="1600" height="13"/></g></mask>
+    <radialGradient id="haze" cx=".5" cy=".72" r=".5"><stop offset="0" stop-color="#ffb35c" stop-opacity=".55"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/></radialGradient>
+   </defs>
+   <rect width="1600" height="900" fill="url(#sky)"/>
+   <g fill="#fff" opacity=".7"><circle cx="210" cy="90" r="1.4"/><circle cx="420" cy="160" r="1"/><circle cx="660" cy="70" r="1.2"/><circle cx="980" cy="120" r="1"/><circle cx="1210" cy="60" r="1.5"/><circle cx="1400" cy="150" r="1"/><circle cx="1500" cy="80" r="1.2"/><circle cx="90" cy="200" r="1"/><circle cx="820" cy="190" r="1"/></g>
+   <rect width="1600" height="900" fill="url(#haze)"/>
+   <g class="layer" data-depth="6"><g class="sun"><circle cx="1050" cy="560" r="190" fill="url(#sunG)" mask="url(#cuts)"/></g></g>
+   <!-- skyline (fiktif) -->
+   <g class="layer" data-depth="12" fill="#4a1a6e" opacity=".9">
+    <path d="M0 660V600h40v-30h30v30h24v-60h36v60h30v-90h44v90h26v-40h40v40h30v-120h18v-20h20v20h18v120h40v-50h34v50h28v-70h44v70h26v-30h30v30h40v-100h22v-16h24v16h22v100h30v-40h48v40h30v-60h36v60h40v-140h16v-24h12v24h16v140h34v-50h40v50h30v-80h48v80h24v-36h44v36h30v-110h20v-18h26v18h20v110h34v-46h36v46h28v-66h40v66h30v-30h46v30h36v-90h50v90h40V660z"/>
+   </g>
+   <g class="layer" data-depth="12" fill="#ffd27a" opacity=".55"><rect x="262" y="540" width="4" height="6"/><rect x="272" y="556" width="4" height="6"/><rect x="684" y="520" width="4" height="6"/><rect x="694" y="540" width="4" height="6"/><rect x="884" y="500" width="4" height="6"/><rect x="1184" y="560" width="4" height="6"/><rect x="1196" y="576" width="4" height="6"/><rect x="560" y="574" width="4" height="6"/></g>
+   <!-- laut -->
+   <rect y="660" width="1600" height="240" fill="url(#sea)"/>
+   <rect y="660" width="1600" height="240" fill="url(#glow)"/>
+   <g class="layer" data-depth="4" fill="#ffc46b" opacity=".75"><rect x="940" y="672" width="220" height="3" rx="1.5"/><rect x="970" y="690" width="160" height="3" rx="1.5"/><rect x="1000" y="710" width="100" height="3" rx="1.5"/><rect x="1020" y="732" width="60" height="2" rx="1"/></g>
+   <!-- palem kiri & kanan -->
+   <g class="layer" data-depth="26" fill="#160a29">
+    <g class="sway"><path d="M150 900c6-120 4-250 26-370l10 2c-18 120-16 250-18 368z"/>
+     <path d="M182 528c-40-30-100-36-150-20 50-6 100 6 140 30zM186 526c-10-50-50-90-100-104 40 22 76 60 90 108zM188 524c30-46 84-70 140-66-52 10-100 34-130 72zM186 530c46-14 100-6 140 26-44-20-96-24-136-18zM180 532c-30 24-50 64-50 110 10-42 30-80 58-104zM190 528c24 30 34 74 26 116-4-40-16-78-34-108z"/></g>
+    <g class="sway" style="animation-delay:-3s"><path d="M310 900c-2-90 4-180 -10-270l9-2c14 90 10 180 13 272z"/>
+     <path d="M300 630c-34-22-84-24-124-6 42-6 84 4 118 22zM303 628c-6-40-38-72-80-84 32 18 62 50 72 88zM306 626c24-36 66-56 112-52-42 8-80 28-104 60zM304 632c38-10 82-2 114 24-36-16-78-20-112-14z"/></g>
+   </g>
+   <g class="layer" data-depth="30" fill="#160a29">
+    <g class="sway" style="animation-delay:-1.5s"><path d="M1470 900c-6-130 -2-260 -30-390l-10 3c24 130 22 260 26 387z"/>
+     <path d="M1436 508c40-34 104-42 156-24-52-6-106 8-148 34zM1432 506c8-54 50-96 104-112-42 24-80 64-94 116zM1430 504c-34-48-90-72-148-66 54 10 104 34 136 74zM1432 510c-48-14-104-4-146 30 46-22 100-26 140-20zM1440 512c32 26 52 68 52 116-10-44-32-84-60-110z"/></g>
+   </g>
+   <rect y="868" width="1600" height="32" fill="#120822"/>
+  </svg>
+ </div>
+
+ <div class="topbar">
+  <a class="mark" href="#top">labsiber<small>.pro</small></a>
+  <nav aria-label="Navigasi utama"><a href="#rute">Rute belajar</a><a href="#catatan">Catatan peserta</a></nav>
+ </div>
+ <div class="hero-copy">
+  <h1>Dari laporan intel sampai respons insiden.</h1>
+  <p>Enam section latihan keamanan siber yang dikerjakan berurutan. Setiap section berisi lab interaktif, materi PDF, dan file sample.</p>
+  <a class="cta" href="#rute" id="startCta">Mulai dari section 1
+   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+ </div>
+</header>
+
+<section class="route" id="rute" aria-labelledby="ruteH">
+ <div class="route-inner">
+  <h2 id="ruteH">Rute belajar</h2>
+  <p class="lead">Pilih section untuk melihat lab, materi PDF, dan sample-nya. Kerjakan dari kiri ke kanan: temuan di satu section menjadi bekal untuk section berikutnya.</p>
+  <div class="track" role="tablist" aria-label="Section latihan" id="track">
+   <div class="road" id="road" aria-hidden="true"><i></i><b></b></div>
+  </div>
+  <p class="reskey" aria-hidden="true">Tiga garis kecil di setiap section menandai lab, materi PDF, dan sample. Teal berarti sudah tersedia.</p>
+
+  <div class="panel" id="panel" role="tabpanel" tabindex="-1"></div>
+ </div>
+</section>
+
+<section class="notes" id="catatan" aria-labelledby="noteH">
+ <h2 id="noteH">Catatan untuk peserta</h2>
+ <ul>
+  <li><b>Progres tersimpan di browser Anda</b>Jawaban di setiap lab disimpan di browser dan perangkat yang Anda pakai. Gunakan tombol unduh atau cetak di lab untuk menyerahkan hasil.</li>
+  <li><b>Kembali ke halaman ini kapan saja</b>Setiap lab punya tombol Beranda di pojok layar.</li>
+  <li><b>Perlakukan sample dengan hati-hati</b>Buka file sample hanya di mesin virtual latihan, bukan di laptop kerja. Password ZIP tertulis di samping file.</li>
+ </ul>
+</section>
+
+<footer>
+ <a class="mark" href="#top">labsiber<small>.pro</small></a>
+ <span>Materi pelatihan internal. Semua organisasi, orang, dan perkara dalam lab adalah fiktif.</span>
+</footer>
+
+<script src="materi.js"></script>
+<script>
+(()=>{
+const S=window.LABSIBER_SECTIONS||[];
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const track=document.getElementById('track'),panel=document.getElementById('panel'),road=document.getElementById('road');
+const ICON={
+ lab:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M7 9l3 2-3 2M12 13h4"/></svg>',
+ pdf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>',
+ smp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>'};
+const has=s=>[!!s.lab,s.pdf.length>0,s.sample.length>0];
+
+// stations
+S.forEach((s,i)=>{
+ const b=document.createElement('button');b.type='button';b.setAttribute('role','tab');b.id='tab-'+s.slug;
+ b.className='stop '+(s.status==='ready'?'ready':'soon');b.setAttribute('aria-controls','panel');b.setAttribute('aria-selected','false');b.tabIndex=-1;b.dataset.i=i;
+ const h=has(s);
+ b.innerHTML=`<span class="dot">${i+1}</span><span class="txt"><span class="nm">${esc(s.short)}</span><span class="st">${s.status==='ready'?'Lab siap':'Segera'}</span></span><span class="res" aria-hidden="true">${h.map(x=>`<span class="${x?'on':''}"></span>`).join('')}</span>`;
+ b.setAttribute('aria-label',`Section ${i+1}: ${s.title}. ${s.status==='ready'?'Lab siap':'Segera'}. ${h[1]?'Ada materi PDF':'Belum ada materi PDF'}. ${h[2]?'Ada sample':'Belum ada sample'}.`);
+ track.appendChild(b);
+});
+const lastReady=S.reduce((a,s,i)=>s.status==='ready'?i:a,-1);
+road.style.setProperty('--done',S.length>1?(lastReady/(S.length-1)*100)+'%':'0%');
+const stops=[...track.querySelectorAll('.stop')];
+
+function fileList(arr,emptyMsg){
+ if(!arr.length)return `<p>${emptyMsg}</p>`;
+ return `<ul class="files">${arr.map(f=>`<li><a href="${esc(f.href)}" ${/^https?:/.test(f.href)?'target="_blank" rel="noopener"':'download'}><span>${esc(f.name)}</span>${f.size?`<small>${esc(f.size)}</small>`:''}</a>${f.note?`<span class="note">${esc(f.note)}</span>`:''}</li>`).join('')}</ul>`;
+}
+let cur=-1;
+function select(i,{focus=false,scroll=false,anim=true}={}){
+ if(i<0||i>=S.length)return;
+ cur=i;const s=S[i];
+ stops.forEach((b,k)=>{b.setAttribute('aria-selected',k===i);b.tabIndex=k===i?0:-1});
+ panel.setAttribute('aria-labelledby','tab-'+s.slug);
+ panel.innerHTML=`
+  <div>
+   <div class="p-no" aria-hidden="true">${String(i+1).padStart(2,'0')}</div>
+   <h3 class="p-title">${esc(s.title)}</h3>
+   <span class="badge ${s.status==='ready'?'':'soon'}">${s.status==='ready'?'Lab siap dipakai':'Sedang disiapkan'}</span>
+   <p class="p-detail">${esc(s.detail)}</p>
+   ${s.facts.length?`<ul class="facts">${s.facts.map(([v,l])=>`<li><b>${esc(v)}</b><span>${esc(l)}</span></li>`).join('')}</ul>`:''}
+   <div class="steps">
+    <button type="button" class="ghost" data-step="-1" ${i===0?'disabled':''}>Section sebelumnya</button>
+    <button type="button" class="ghost" data-step="1" ${i===S.length-1?'disabled':''}>Section berikutnya</button>
+   </div>
+  </div>
+  <div class="res-grid">
+   <div class="res-card"><span class="ic lab" aria-hidden="true">${ICON.lab}</span><h3>Lab</h3>
+    ${s.lab?`<p>${esc(s.summary)}</p><a class="go" href="${esc(s.lab)}">Buka lab ${esc(s.short)}</a>`:'<p>Lab untuk section ini sedang dibangun.</p>'}</div>
+   <div class="res-card"><span class="ic pdf" aria-hidden="true">${ICON.pdf}</span><h3>Materi PDF</h3>
+    ${fileList(s.pdf,'Materi PDF belum diunggah. Tanyakan ke instruktur jika Anda membutuhkannya sekarang.')}</div>
+   <div class="res-card"><span class="ic smp" aria-hidden="true">${ICON.smp}</span><h3>Sample</h3>
+    ${fileList(s.sample,s.lab?'Belum ada file sample untuk section ini.':'File sample akan tersedia bersama lab.')}</div>
+  </div>`;
+ if(anim){panel.classList.remove('swap');void panel.offsetWidth;panel.classList.add('swap')}
+ if(focus)stops[i].focus();
+ if(location.hash.slice(1)!==s.slug)history.replaceState(null,'','#'+s.slug);
+ if(scroll&&matchMedia('(max-width:900px)').matches)panel.scrollIntoView({block:'start'});
+}
+track.addEventListener('click',e=>{const b=e.target.closest('.stop');if(b)select(+b.dataset.i,{scroll:true})});
+track.addEventListener('keydown',e=>{
+ const k={ArrowRight:1,ArrowDown:1,ArrowLeft:-1,ArrowUp:-1}[e.key];
+ if(k){e.preventDefault();select((cur+k+S.length)%S.length,{focus:true})}
+ else if(e.key==='Home'){e.preventDefault();select(0,{focus:true})}
+ else if(e.key==='End'){e.preventDefault();select(S.length-1,{focus:true})}
+});
+panel.addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(b&&!b.disabled)select(cur+(+b.dataset.step),{scroll:true})});
+document.getElementById('startCta').addEventListener('click',()=>select(0,{anim:false}));
+
+const fromHash=()=>{const i=S.findIndex(s=>s.slug===location.hash.slice(1));return i};
+const h0=fromHash();
+select(h0>=0?h0:0,{anim:false});
+if(h0<0)history.replaceState(null,'',location.pathname);
+window.addEventListener('hashchange',()=>{const i=fromHash();if(i>=0)select(i)});
+
+// satu momen animasi: "sinyal" berjalan di sepanjang rute saat rute terlihat
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const light=()=>{stops.forEach((b,i)=>{const d=reduce?0:200+i/(Math.max(1,S.length-1))*2000;setTimeout(()=>b.classList.add('lit'),d)})};
+if(reduce||!('IntersectionObserver' in window)){light()}
+else{const io=new IntersectionObserver(es=>{if(es.some(x=>x.isIntersecting)){road.classList.add('go');light();io.disconnect()}},{threshold:.4});io.observe(track)}
+
+// parallax lembut mengikuti kursor (hanya pointer presisi, tanpa reduced motion)
+if(!reduce&&matchMedia('(pointer:fine)').matches){
+ const hero=document.querySelector('.hero'),layers=[...hero.querySelectorAll('.layer')];let raf=0;
+ hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+  cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>layers.forEach(l=>{const d=+l.dataset.depth;l.style.transform=`translate(${(-x*d).toFixed(1)}px,${(-y*d*.4).toFixed(1)}px)`}))});
+ hero.addEventListener('pointerleave',()=>layers.forEach(l=>l.style.transform=''));
+}
+})();
+</script>
+</body>
+</html>
