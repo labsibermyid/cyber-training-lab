@@ -34,7 +34,9 @@ window.LAB_SECTIONS = [
     lab: 'cti-apt-profiling/',
     slides: 'presentasi/?d=cti-apt-profiling',
     slidesCount: 121,
-    pdf: [],
+    pdf: [
+      { name: 'Cyber Threat Intelligence (versi presentasi)', href: 'cti-apt-profiling/materi/Cyber-Threat-Intelligence.pdf', size: '1,2 MB · 121 halaman' }
+    ],
     sample: []
   },
   {
